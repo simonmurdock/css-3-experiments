@@ -1,0 +1,41 @@
+<html>
+<head>
+	<link rel="stylesheet" href="css/css.css">
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.1.0/knockout-min.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+	<script type="text/javascript" src="js/js.js"></script>
+</head>
+<body>
+
+	<div class='banner'>
+		<div id="parallxWrapper">
+			<div class="parallxBackground" data-bind="attr: { style:'-webkit-transform:perspective(1000px) rotateY(' + relativeMouse.x() + 'deg) rotateX(' + relativeMouse.y() + 'deg);transform:perspective(1000px) rotateY(' + relativeMouse.x() + 'deg) rotateX(' + relativeMouse.y() + 'deg)' }">
+				<div class="parallxLayerLogo"></div>
+				<div class="parallxLayerRStar"></div>
+				<div class="parallxLayerShooter"></div>
+			</div>
+		</div>
+	</div>
+	<div class="container" style="margin-top:60px;">
+		<div class="col-md-8">
+			<p class='lead'>Parallax Mouse follow, using knockout observables</p>
+		</div>
+	</div>
+
+	<script language="javascript">
+
+		$(document).ready(function() {
+			parallax = new Parallx();
+			ko.applyBindings(parallax);
+
+			setInterval(function() {
+				if(demoCount < 130){
+					parallax.mouseX(parallax.mouseX() + 10);
+					demoCount+=1;
+				}
+			}, 40);
+		});
+			
+	</script>
+</body>
+</html>

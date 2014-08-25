@@ -1,0 +1,41 @@
+
+body,html {
+  background-color:#000;
+}
+#layers {
+   position:relative;
+    width:1200px;
+    left: 50%;
+    height:600px;
+    margin-left:-600px;
+    overflow:hidden;
+  	-webkit-transform-style: preserve-3d;
+}
+img {
+  -webkit-transform: translate3d(0, 0, 0);
+}
+#layers #runner {
+  position:absolute;
+  top:0px;
+  left:0px;
+}
+
+#layers #dirt {
+  position:absolute;
+  top:0px;
+  left:0px;
+}
+#instructions {
+  width:500px;
+  margin-left:400px;
+  height:20px;
+  text-align:center;
+  font-size:12pt;
+  position:absolute;
+  top:10px;;
+  font-family:Helvetica,Arial;
+  left:0;
+  background:rgba(0,0,0,0.6);
+  border-radius:10px;
+  color:white;
+}
