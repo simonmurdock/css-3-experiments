@@ -22,11 +22,11 @@ resize = function(photo, max_width, max_height) {
 
     var width = photo.width;
     var height = photo.height;
- 	var ratio = Math.min(max_height / height);
+ 		var ratio = max_height / height;
 
     photo.newScale = {
-    		width: Math.round((photo.width*ratio)/2),
-    		height: Math.round(max_height/2)
+    		width: (photo.width*ratio)/2,
+    		height: max_height/2
     	};
 };
 
@@ -41,7 +41,7 @@ resize = function(photo, max_width, max_height) {
 	photos.push({name:6,width:374,height:245});
 	photos.push({name:7,width:1024,height:1024});
 	photos.push({name:8,width:441,height:286});
-	photos.push({name:9,width:315,height:196});
+	photos.push({name:9,width:1600,height:1067});
 	photos.push({name:10,width:277,height:186});
 	photos.push({name:11,width:1296,height:1680});
 	photos.push({name:12,width:1298,height:1678});
@@ -55,7 +55,7 @@ calculateFit = function(){
 		photo.aspect_ratio = photo.width/photo.height;
 	});
 
-	viewport_width = $('#container').width()*2-5; // doubled as sizes are
+	viewport_width = $('#container').width()*2-1; // doubled as sizes are
 	summed_width = photos.reduce( function(total, photo){ return total + photo.width; }, 0);
 	rows = Math.round(summed_width / viewport_width);
 
@@ -84,16 +84,20 @@ calculateFit = function(){
 	    return $.each(row_buffer,function (index,photo) {
 	        resize(photo,viewport_width / summed_ars * photo.aspect_ratio, viewport_width / summed_ars);
 
-			var rowDiv = '#container #row' +rowIndex;
-			$(rowDiv).append('<div id="photo'+photo.name+'"/>');
-			$(rowDiv).addClass('galleryRow');
+				var rowDiv = '#container #row' +rowIndex;
+				$(rowDiv).append('<div id="photo'+photo.name+'"/>');
+				$(rowDiv).addClass('galleryRow');
 
-			var photoDiv = '#photo' + photo.name;
-			$(photoDiv).addClass('galleryPic');
-			$(photoDiv).css('width',photo.newScale.width);
-			$(photoDiv).css('height',photo.newScale.height);
-			$(photoDiv).css('background-image','url("css/img/' + photo.name +'.png")');
-			$(photoDiv).append('<div class="buttonBar">'+photo.width + 'x'+ photo.height +'</div>');
+				var photoDiv = '#photo' + photo.name;
+				$(photoDiv).addClass('galleryPic');
+
+				$(photoDiv).css({
+					width:photo.newScale.width,
+					height:photo.newScale.height,
+					backgroundImage:'url("css/img/' + photo.name +'.png")'
+				});
+
+				$(photoDiv).append('<div class="buttonBar">'+photo.width + 'x'+ photo.height +'</div>');
 	    });
 
 	});

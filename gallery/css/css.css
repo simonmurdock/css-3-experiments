@@ -10,7 +10,8 @@ body {
 		background-size: cover;
 		-moz-box-sizing: border-box;    /* Firefox, other Gecko */
 		box-sizing: border-box;
-		border:1px solid white;
+		border:2px solid white;
+		image-rendering: optimizeSpeed;
 	}
 		#container .galleryPic .buttonBar {
 			background-color:rgba(0,0,0,0.5);
@@ -19,10 +20,12 @@ body {
 			color:white;
 			font-size:12pt;
 			opacity:0;
+			display:none;
 		}
 
 		#container .galleryPic:hover .buttonBar {
 			opacity:1;
+			display:none;
 		}
 
 	#container .galleryRow {
