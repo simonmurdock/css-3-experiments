@@ -1,16 +1,101 @@
+
 <html>
 <head>
 	<link rel="stylesheet" href="css/css.css">
-	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-	<script src="/path/to/masonry.pkgd.min.js"></script>
-	<script type="text/javascript" src="js/js.js"></script>
+	<script type="text/javascript" src="js/jquery.js"></script>
+	<script type="text/javascript" src="js/linear_partition.js"></script>
+	<script type="text/javascript" src="js/underscore-min.js"></script>
+	
 </head>
 <body>
-<div id='container'>
-	
-</div>
+	<div id='container'>
+		<div class='clear'></div>
+	</div>
+	<table id='table'></table>
 <script>
-	
+
+
+var g = {};
+
+resize = function(photo, max_width, max_height) {
+
+    var width = photo.width;
+    var height = photo.height;
+ 	var ratio = Math.min(max_height / height);
+
+    photo.newScale = { 
+    		width: Math.round((photo.width*ratio)/2),
+    		height: Math.round(max_height/2) 
+    	};
+};
+
+	photos = [];
+	photos.push({name:1,width:182,height:323});
+	photos.push({name:2,width:312,height:153});
+	photos.push({name:3,width:156,height:323});
+	photos.push({name:4,width:417,height:152});
+	photos.push({name:5,width:297,height:226});
+	photos.push({name:6,width:374,height:245});
+	photos.push({name:7,width:396,height:270});
+	photos.push({name:8,width:441,height:286});
+	photos.push({name:9,width:315,height:196});
+	photos.push({name:10,width:277,height:186});
+	photos.push({name:11,width:153,height:214});
+	photos.push({name:12,width:192,height:273});
+	photos.push({name:13,width:297,height:123});
+
+	$.each(photos, function( index, photo ) {
+		photo.aspect_ratio = photo.width/photo.height;
+	});
+
+	viewport_width = window.screen.width;
+	summed_width = photos.reduce( function(total, photo){ return total + photo.width; }, 0);
+	rows = Math.round(summed_width / viewport_width);
+
+	weights = photos.map(function (p) {
+	    return parseInt(p.aspect_ratio * 100);
+	});
+
+	partition = linearPartition(weights, rows);
+	index = 0;
+	row_buffer = [];
+
+	$.each(partition, function (rowIndex,row) {
+
+		$('#container').prepend('<div id="row'+rowIndex+'"></div>'); /* prepend to maintain clear div added */
+	    var summed_ars;
+	    row_buffer = [];
+
+	    _.each(row, function () {
+	        return row_buffer.push(photos[index++]);
+	    });
+
+	    summed_ars = row_buffer.reduce((function (sum, p) {
+	        return sum += p.aspect_ratio;
+	    }), 0);
+
+	    return $.each(row_buffer,function (index,photo) {
+	        resize(photo,viewport_width / summed_ars * photo.aspect_ratio, viewport_width / summed_ars);
+
+			var rowDiv = '#container #row' +rowIndex;
+			$(rowDiv).append('<div id="photo'+photo.name+'"/>');
+			$(rowDiv).addClass('galleryRow');
+
+			var photoDiv = '#photo' + photo.name;
+			$(photoDiv).addClass('galleryPic');
+			$(photoDiv).css('width',photo.newScale.width);
+			$(photoDiv).css('height',photo.newScale.height);
+			$(photoDiv).css('background-image','url("css/img/' + photo.name +'.png")');
+	    });
+
+	});
+
+window.onresize = function(event) {
+    console.log('resisinzg');
+};
+
+
+
 </script>
 </body>
-</html>
+</html
