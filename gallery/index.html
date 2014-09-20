@@ -29,6 +29,8 @@ resize = function(photo, max_width, max_height) {
     	};
 };
 
+	var photos, viewport_width, summed_width, rows, partition, index, row_buffer, 
+
 	photos = [];
 	photos.push({name:1,width:182,height:323});
 	photos.push({name:2,width:312,height:153});
@@ -44,11 +46,15 @@ resize = function(photo, max_width, max_height) {
 	photos.push({name:12,width:192,height:273});
 	photos.push({name:13,width:297,height:123});
 
+calculateFit = function(){
+	
+	$('#container').html('')
+
 	$.each(photos, function( index, photo ) {
 		photo.aspect_ratio = photo.width/photo.height;
 	});
 
-	viewport_width = window.screen.width;
+	viewport_width = $('#container').width()*2-5; // doubled as sizes are
 	summed_width = photos.reduce( function(total, photo){ return total + photo.width; }, 0);
 	rows = Math.round(summed_width / viewport_width);
 
@@ -86,12 +92,28 @@ resize = function(photo, max_width, max_height) {
 			$(photoDiv).css('width',photo.newScale.width);
 			$(photoDiv).css('height',photo.newScale.height);
 			$(photoDiv).css('background-image','url("css/img/' + photo.name +'.png")');
+			$(photoDiv).append('<div class="buttonBar">'+photo.width + 'x'+ photo.height +'</div>');
 	    });
 
 	});
+};
+
+
+$( document ).ready(function() {
+	calculateFit();
+/*
+	setInterval(function(){
+		console.log('arse');
+		var width = $('#container').width();
+		width++;
+		$('#container').width(width);
+		calculateFit();
+	},20);
+	*/
+});
 
 window.onresize = function(event) {
-    console.log('resisinzg');
+    calculateFit();
 };
 
 
