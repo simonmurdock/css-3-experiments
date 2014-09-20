@@ -12,12 +12,12 @@ body {
 		box-sizing: border-box;
 		border:1px solid white;
 	}
-		#container .galleryPic .buttonBar { 
-			background-color:rgba(0,0,0,0.3);
+		#container .galleryPic .buttonBar {
+			background-color:rgba(0,0,0,0.5);
 			padding:10px;
 			font-family:helvetica;
 			color:white;
-			font-size:5pt;
+			font-size:12pt;
 			opacity:0;
 		}
 
@@ -29,6 +29,6 @@ body {
 		clear:left;
 	}
 
-.clear{ 
+.clear{
 	clear:both;
 }

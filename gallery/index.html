@@ -5,7 +5,8 @@
 	<script type="text/javascript" src="js/jquery.js"></script>
 	<script type="text/javascript" src="js/linear_partition.js"></script>
 	<script type="text/javascript" src="js/underscore-min.js"></script>
-	
+	<script type="text/javascript" src="js/angular.min.js"></script>
+  <title>dynamic gallery</title>
 </head>
 <body>
 	<div id='container'>
@@ -23,31 +24,31 @@ resize = function(photo, max_width, max_height) {
     var height = photo.height;
  	var ratio = Math.min(max_height / height);
 
-    photo.newScale = { 
+    photo.newScale = {
     		width: Math.round((photo.width*ratio)/2),
-    		height: Math.round(max_height/2) 
+    		height: Math.round(max_height/2)
     	};
 };
 
-	var photos, viewport_width, summed_width, rows, partition, index, row_buffer, 
+	var photos, viewport_width, summed_width, rows, partition, index, row_buffer;
 
 	photos = [];
 	photos.push({name:1,width:182,height:323});
 	photos.push({name:2,width:312,height:153});
-	photos.push({name:3,width:156,height:323});
-	photos.push({name:4,width:417,height:152});
+	photos.push({name:3,width:1282,height:1660});
+	photos.push({name:4,width:2048,height:1363});
 	photos.push({name:5,width:297,height:226});
 	photos.push({name:6,width:374,height:245});
-	photos.push({name:7,width:396,height:270});
+	photos.push({name:7,width:1024,height:1024});
 	photos.push({name:8,width:441,height:286});
 	photos.push({name:9,width:315,height:196});
 	photos.push({name:10,width:277,height:186});
-	photos.push({name:11,width:153,height:214});
-	photos.push({name:12,width:192,height:273});
+	photos.push({name:11,width:1296,height:1680});
+	photos.push({name:12,width:1298,height:1678});
 	photos.push({name:13,width:297,height:123});
 
 calculateFit = function(){
-	
+
 	$('#container').html('')
 
 	$.each(photos, function( index, photo ) {
