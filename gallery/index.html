@@ -1,18 +1,18 @@
 
 <html>
 <head>
-	<link rel="stylesheet" href="css/css.css">
-	<script type="text/javascript" src="js/jquery.js"></script>
-	<script type="text/javascript" src="js/linear_partition.js"></script>
-	<script type="text/javascript" src="js/underscore-min.js"></script>
-	<script type="text/javascript" src="js/angular.min.js"></script>
+  <link rel="stylesheet" href="css/css.css">
+  <script type="text/javascript" src="js/jquery.js"></script>
+  <script type="text/javascript" src="js/linear_partition.js"></script>
+  <script type="text/javascript" src="js/underscore-min.js"></script>
   <title>dynamic gallery</title>
 </head>
 <body>
-	<div id='container'>
-		<div class='clear'></div>
-	</div>
-	<table id='table'></table>
+  <span data-bind='text:firstName'></span>
+  <div id='container'>
+    <div class='clear'></div>
+  </div>
+  <table id='table'></table>
 <script>
 
 
@@ -22,99 +22,98 @@ resize = function(photo, max_width, max_height) {
 
     var width = photo.width;
     var height = photo.height;
- 		var ratio = max_height / height;
+     var ratio = max_height / height;
 
     photo.newScale = {
-    		width: (photo.width*ratio)/2,
-    		height: max_height/2
-    	};
+        width: (photo.width*ratio)/2,
+        height: max_height/2
+      };
 };
 
-	var photos, viewport_width, summed_width, rows, partition, index, row_buffer;
+  var photos, viewport_width, summed_width, rows, partition, index, row_buffer;
 
-	photos = [];
-	photos.push({name:1,width:182,height:323});
-	photos.push({name:2,width:312,height:153});
-	photos.push({name:3,width:1282,height:1660});
-	photos.push({name:4,width:2048,height:1363});
-	photos.push({name:5,width:297,height:226});
-	photos.push({name:6,width:374,height:245});
-	photos.push({name:7,width:1024,height:1024});
-	photos.push({name:8,width:441,height:286});
-	photos.push({name:9,width:1600,height:1067});
-	photos.push({name:10,width:277,height:186});
-	photos.push({name:11,width:1296,height:1680});
-	photos.push({name:12,width:1298,height:1678});
-	photos.push({name:13,width:297,height:123});
+function galleryViewModel() {
+    this.firstName = ko.observable('bert');
+}
+
+
+  photos = [];
+  photos.push({name:1,width:182,height:323});
+  photos.push({name:2,width:312,height:153});
+  photos.push({name:3,width:1282,height:1660});
+  photos.push({name:4,width:2048,height:1363});
+  photos.push({name:5,width:297,height:226});
+  photos.push({name:6,width:374,height:245});
+  photos.push({name:7,width:1024,height:1024});
+  photos.push({name:8,width:441,height:286});
+  photos.push({name:9,width:1600,height:1067});
+  photos.push({name:10,width:277,height:186});
+  photos.push({name:11,width:1296,height:1680});
+  photos.push({name:12,width:1298,height:1678});
+  photos.push({name:13,width:297,height:123});
 
 calculateFit = function(){
 
-	$('#container').html('')
+  $('#container').html('')
 
-	$.each(photos, function( index, photo ) {
-		photo.aspect_ratio = photo.width/photo.height;
-	});
+  $.each(photos, function( index, photo ) {
+    photo.aspect_ratio = photo.width/photo.height;
+  });
 
-	viewport_width = $('#container').width()*2-1; // doubled as sizes are
-	summed_width = photos.reduce( function(total, photo){ return total + photo.width; }, 0);
-	rows = Math.round(summed_width / viewport_width);
+  viewport_width = $('#container').width()*2-1; // doubled as sizes are
+  summed_width = photos.reduce( function(total, photo){ return total + photo.width; }, 0);
+  rows = Math.round(summed_width / viewport_width);
 
-	weights = photos.map(function (p) {
-	    return parseInt(p.aspect_ratio * 100);
-	});
+  weights = photos.map(function (p) {
+      return parseInt(p.aspect_ratio * 100);
+  });
 
-	partition = linearPartition(weights, rows);
-	index = 0;
-	row_buffer = [];
+  partition = linearPartition(weights, rows);
+  index = 0;
+  row_buffer = [];
 
-	$.each(partition, function (rowIndex,row) {
+  $.each(partition, function (rowIndex,row) {
 
-		$('#container').prepend('<div id="row'+rowIndex+'"></div>'); /* prepend to maintain clear div added */
-	    var summed_ars;
-	    row_buffer = [];
+    $('#container').prepend('<div id="row'+rowIndex+'"></div>'); /* prepend to maintain clear div added */
+      var summed_ars;
+      row_buffer = [];
 
-	    _.each(row, function () {
-	        return row_buffer.push(photos[index++]);
-	    });
+      _.each(row, function () {
+          return row_buffer.push(photos[index++]);
+      });
 
-	    summed_ars = row_buffer.reduce((function (sum, p) {
-	        return sum += p.aspect_ratio;
-	    }), 0);
+      summed_ars = row_buffer.reduce((function (sum, p) {
+          return sum += p.aspect_ratio;
+      }), 0);
 
-	    return $.each(row_buffer,function (index,photo) {
-	        resize(photo,viewport_width / summed_ars * photo.aspect_ratio, viewport_width / summed_ars);
+      return $.each(row_buffer,function (index,photo) {
+          resize(photo,viewport_width / summed_ars * photo.aspect_ratio, viewport_width / summed_ars);
 
-				var rowDiv = '#container #row' +rowIndex;
-				$(rowDiv).append('<div id="photo'+photo.name+'"/>');
-				$(rowDiv).addClass('galleryRow');
+        var rowDiv = '#container #row' +rowIndex;
+        $(rowDiv).append('<div id="photo'+photo.name+'"/>');
+        $(rowDiv).addClass('galleryRow');
 
-				var photoDiv = '#photo' + photo.name;
-				$(photoDiv).addClass('galleryPic');
+        var photoDiv = '#photo' + photo.name;
+        $(photoDiv).addClass('galleryPic');
 
-				$(photoDiv).css({
-					width:photo.newScale.width,
-					height:photo.newScale.height,
-					backgroundImage:'url("css/img/' + photo.name +'.png")'
-				});
+        $(photoDiv).css({
+          width:photo.newScale.width,
+          height:photo.newScale.height,
+          backgroundImage:'url("css/img/' + photo.name +'.png")'
+        });
 
-				$(photoDiv).append('<div class="buttonBar">'+photo.width + 'x'+ photo.height +'</div>');
-	    });
+        $(photoDiv).append('<div class="buttonBar">'+photo.width + 'x'+ photo.height +'</div>');
+      });
 
-	});
+  });
 };
 
-
+var vm;
 $( document ).ready(function() {
-	calculateFit();
-/*
-	setInterval(function(){
-		console.log('arse');
-		var width = $('#container').width();
-		width++;
-		$('#container').width(width);
-		calculateFit();
-	},20);
-	*/
+  calculateFit();
+
+ vm = new galleryViewModel();
+  ko.applyBindings(vm);
 });
 
 window.onresize = function(event) {
