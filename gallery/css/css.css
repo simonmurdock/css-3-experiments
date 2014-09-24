@@ -3,6 +3,18 @@ body {
 	padding:0px;
 }
 
+#pageLayout {
+}
+
+#leftColumn {
+	width:200px;
+	float:left;
+}
+
+#rightColumn {
+	overflow:hidden;
+}
+
 #container {}
 
 	#container .galleryPic {
@@ -32,6 +44,6 @@ body {
 		clear:left;
 	}
 
-.clear{
+.clear {
 	clear:both;
 }
