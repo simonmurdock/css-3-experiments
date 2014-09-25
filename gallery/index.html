@@ -4,7 +4,6 @@
   <link rel="stylesheet" href="css/css.css">
   <script type="text/javascript" src="js/jquery.js"></script>
   <script type="text/javascript" src="js/linear_partition.js"></script>
-  <script type="text/javascript" src="js/underscore-min.js"></script>
   <title>dynamic gallery</title>
 </head>
 <body>
@@ -16,104 +15,115 @@
   </div>
 <script>
 
-
 var g = {};
 
 resize = function(photo, max_width, max_height) {
-
-    var width = photo.width;
-    var height = photo.height;
-    var ratio = max_height / height;
-
-    photo.newScale = {
-        width: (photo.width*ratio),
-        height: max_height
-      };
+    var ratio = max_height / photo.height;
+	photo.newScale = {
+		width: (photo.width*ratio),
+		height: max_height // set from row sum ars
+	};
 };
 
-  var photos, viewport_width, summed_width, rows, partition, index, row_buffer, devicePixelRatio;
+var photos, viewport_width, summed_width, rows, partition, index, row_buffer, devicePixelRatio;
 
-  photos = [];
-  photos.push({name:1,width:182,height:323});
-  photos.push({name:2,width:312,height:153});
-  photos.push({name:3,width:1282,height:1660});
-  photos.push({name:4,width:2048,height:1363});
-  photos.push({name:5,width:297,height:226});
-  photos.push({name:6,width:374,height:245});
-  photos.push({name:7,width:512,height:512});
-  photos.push({name:8,width:441,height:286});
-  photos.push({name:9,width:1600,height:1067});
-  photos.push({name:10,width:277,height:186});
-  photos.push({name:11,width:1296,height:1680});
-  photos.push({name:12,width:1298,height:1678});
-  photos.push({name:13,width:297,height:123});
+photos = [];
+photos.push({name:1,width:182,height:323});
+photos.push({name:2,width:312,height:153});
+photos.push({name:3,width:1282,height:1660});
+photos.push({name:4,width:297,height:226});
+photos.push({name:5,width:374,height:245});
+photos.push({name:6,width:512,height:512});
+photos.push({name:8,width:441,height:286});
+photos.push({name:9,width:1600,height:1067});
+photos.push({name:10,width:277,height:186});
+photos.push({name:11,width:1298,height:1678});
+photos.push({name:12,width:297,height:123});
+photos.push({name:13,width:182,height:323});
 
 calculateFit = function(){
 
-  $('#container').html('')
+	document.getElementById("container").innerHTML = '';
 
-  $.each(photos, function( index, photo ) {
-    photo.aspect_ratio = photo.width/photo.height;
-  });
+	for (var i = 0; i < photos.length; i++) {
+		photos[i].aspect_ratio = photos[i].width/photos[i].height;
+	};
 
-  devicePixelRatio = window.devicePixelRatio;
-  viewport_width = ($('#rightColumn').width())-1; // minus one for rounding issue
-  summed_width = photos.reduce( function(total, photo){ return total + photo.width; }, 0);
-  rows = Math.round(summed_width / (viewport_width*devicePixelRatio));
+	devicePixelRatio = window.devicePixelRatio;
+	//ideal_height = parseInt($(window).height() / 2)
+	summed_width = photos.reduce( function(total, photo){ return total + photo.width; }, 0);
+	viewport_width = ($('#rightColumn').width()-1); // minus one for rounding issue
 
-  weights = photos.map(function (p) {
-      return parseInt(p.aspect_ratio * 100);
-  });
+	// dynamically adjust row count based on 'viewport' width
+	// remove summedwidth*devicepixel to shrink
+	rows = Math.round(summed_width / (viewport_width * devicePixelRatio));
 
-  partition = linearPartition(weights, rows);
-  index = 0;
-  row_buffer = [];
+	weights = [];
+	for (var z = 0; z < photos.length; z++) {
+		weights.push(photos[z].aspect_ratio)
+	};
 
-  $.each(partition, function (rowIndex,row) {
+	partition = linearPartition(weights, rows);
+	index = 0;
+	row_buffer = [];
 
-    $('#container').prepend('<div id="row'+rowIndex+'"></div>'); /* prepend to maintain clear div added */
-      var summed_ars;
-      row_buffer = [];
 
-      _.each(row, function () {
-          return row_buffer.push(photos[index++]);
-      });
+	for (var r = 0; r < partition.length; r++) {
+		
+		var row = partition[r];
 
-      summed_ars = row_buffer.reduce((function (sum, p) {
-          return sum += p.aspect_ratio;
-      }), 0);
+		$('#container').prepend('<div id="row'+r+'"></div>'); /* prepend to maintain clear div added */
 
-      return $.each(row_buffer,function (index,photo) {
-          resize(photo,viewport_width / summed_ars * photo.aspect_ratio, viewport_width / summed_ars);
+		var summed_ars = 0;
+		row_buffer = [];
 
-        var rowDiv = '#container #row' + rowIndex;
-        $(rowDiv).append('<div id="photo' + photo.name + '"></div>');
-        $(rowDiv).addClass('galleryRow');
+		for (var i = 0; i < row.length; i++) {
+			row_buffer.push(photos[index++]);
+		};
 
-        var photoDiv = '#photo' + photo.name;
-        $(photoDiv).addClass('galleryPic');
+		for (var z = 0; z < row_buffer.length; z++) {
+			summed_ars += row_buffer[z].aspect_ratio;
+		};
 
-        $(photoDiv).css({
-          width:photo.newScale.width,
-          height:photo.newScale.height,
-          backgroundImage:'url("css/img/' + photo.name +'.png")'
-        });
+		for (var i = 0; i < row_buffer.length; i++) {
+			var photo = row_buffer[i];
+		
+			resize(photo,viewport_width / summed_ars * photo.aspect_ratio, viewport_width / summed_ars);
 
-        $(photoDiv).append('<div class="buttonBar">'+photo.width + 'x'+ photo.height+'</div>');
-      });
+			var rowDiv = '#container #row' + r;
+			$(rowDiv).append('<div id="photo' + photo.name + '"></div>');
+			$(rowDiv).addClass('galleryRow');
 
-  });
+			var photoDiv = '#photo' + photo.name;
+			$(photoDiv).addClass('galleryPic');
+
+			$(photoDiv).css({
+				width:photo.newScale.width,
+				height:photo.newScale.height,
+				backgroundImage:'url("css/img/' + photo.name +'.png")'
+			});
+
+			$(photoDiv).append('<div class="buttonBar">'+photo.width + 'x'+ photo.height+'</div>');
+		}
+	//});
+	};
+
 };
 
 $( document ).ready(function() {
-  calculateFit();
+	calculateFit();
 });
 
 window.onresize = function(event) {
-    calculateFit();
+	calculateFit();
 };
 
-
+/*
+$('body').mousemove(function(e) {
+	$('#rightColumn').width(e.pageX-$('#container').position().left);
+	calculateFit();
+})
+*/
 
 </script>
 </body>

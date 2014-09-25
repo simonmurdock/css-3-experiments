@@ -1,3 +1,8 @@
+* {
+		-moz-transform: translateZ(0); 
+	transform: translateZ(0); 
+}
+
 body {
 	margin:0px;
 	padding:0px;
@@ -15,29 +20,25 @@ body {
 	overflow:hidden;
 }
 
-#container {}
+#container {
+}
 
 	#container .galleryPic {
+		background:lightgrey;
 		float: left;
 		background-size: cover;
 		-moz-box-sizing: border-box;    /* Firefox, other Gecko */
 		box-sizing: border-box;
-		border:2px solid white;
-		image-rendering: optimizeSpeed;
+		/*border:2px solid white;
+		image-rendering: optimizeSpeed;*/
 	}
 		#container .galleryPic .buttonBar {
-			background-color:rgba(0,0,0,0.5);
+			background-color:rgba(0,0,0,0.3	);
 			padding:10px;
 			font-family:helvetica;
 			color:white;
+			display:none;
 			font-size:12pt;
-			opacity:0;
-			display:none;
-		}
-
-		#container .galleryPic:hover .buttonBar {
-			opacity:1;
-			display:none;
 		}
 
 	#container .galleryRow {
