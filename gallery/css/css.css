@@ -29,16 +29,15 @@ body {
 		background-size: cover;
 		-moz-box-sizing: border-box;    /* Firefox, other Gecko */
 		box-sizing: border-box;
-		/*border:2px solid white;
-		image-rendering: optimizeSpeed;*/
+		border:2px solid white;
+		/*image-rendering: optimizeSpeed;*/
 	}
 		#container .galleryPic .buttonBar {
-			background-color:rgba(0,0,0,0.3	);
+			background-color:rgba(0,0,0,0.5);
 			padding:10px;
 			font-family:helvetica;
 			color:white;
-			display:none;
-			font-size:12pt;
+			font-size:10pt;
 		}
 
 	#container .galleryRow {

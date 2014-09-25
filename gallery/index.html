@@ -17,18 +17,44 @@
 
 var g = {};
 
+
 resize = function(photo, max_width, max_height) {
+
+	//var ideal = window.screen.height/5;
     var ratio = max_height / photo.height;
+
+/*
+	if(max_height > ideal){
+		max_height = ideal;
+	}
+*/
+
 	photo.newScale = {
 		width: (photo.width*ratio),
 		height: max_height // set from row sum ars
 	};
 };
 
-var photos, viewport_width, summed_width, rows, partition, index, row_buffer, devicePixelRatio;
+
+var photos, viewport_width, summed_width, rows, partition, index, row_buffer;
 
 photos = [];
-photos.push({name:1,width:182,height:323});
+photos.push({name:16,width:297,height:226});
+photos.push({name:17,width:374,height:245});
+photos.push({name:18,width:512,height:512});
+photos.push({name:19,width:441,height:286});
+photos.push({name:21,width:277,height:186});
+photos.push({name:23,width:297,height:123});
+photos.push({name:24,width:182,height:323});
+photos.push({name:25,width:312,height:153});
+photos.push({name:27,width:297,height:226});
+photos.push({name:28,width:374,height:245});
+photos.push({name:29,width:512,height:512});
+photos.push({name:30,width:441,height:286});
+photos.push({name:32,width:277,height:186});
+photos.push({name:34,width:297,height:123});
+
+photos.push({name:1,width:181,height:323});
 photos.push({name:2,width:312,height:153});
 photos.push({name:3,width:1282,height:1660});
 photos.push({name:4,width:297,height:226});
@@ -38,8 +64,8 @@ photos.push({name:8,width:441,height:286});
 photos.push({name:9,width:1600,height:1067});
 photos.push({name:10,width:277,height:186});
 photos.push({name:11,width:1298,height:1678});
-photos.push({name:12,width:297,height:123});
-photos.push({name:13,width:182,height:323});
+photos.push({name:12,width:1298,height:1678});
+
 
 calculateFit = function(){
 
@@ -49,19 +75,15 @@ calculateFit = function(){
 		photos[i].aspect_ratio = photos[i].width/photos[i].height;
 	};
 
-	devicePixelRatio = window.devicePixelRatio;
-	//ideal_height = parseInt($(window).height() / 2)
-
 	var summed_width = 0;
 	for (var i = 0; i < photos.length; i++) {
-		summed_width += photos[i].width;
+		summed_width += (photos[i].width);
 	};
-	
 	viewport_width = ($('#rightColumn').width()-1); // minus one for rounding issue
 
 	// dynamically adjust row count based on 'viewport' width
 	// remove summedwidth*devicepixel to shrink
-	rows = Math.round(summed_width / (viewport_width * devicePixelRatio));
+	rows = Math.round(summed_width / (viewport_width));
 
 	weights = [];
 	for (var z = 0; z < photos.length; z++) {
@@ -81,7 +103,6 @@ calculateFit = function(){
 
 		var summed_ars = 0;
 		row_buffer = [];
-
 		for (var i = 0; i < row.length; i++) {
 			row_buffer.push(photos[index++]);
 		};
@@ -92,7 +113,7 @@ calculateFit = function(){
 
 		for (var i = 0; i < row_buffer.length; i++) {
 			var photo = row_buffer[i];
-		
+			
 			resize(photo,viewport_width / summed_ars * photo.aspect_ratio, viewport_width / summed_ars);
 
 			var rowDiv = '#container #row' + r;
@@ -108,7 +129,7 @@ calculateFit = function(){
 				backgroundImage:'url("css/img/' + photo.name +'.png")'
 			});
 
-			$(photoDiv).append('<div class="buttonBar">'+photo.width + 'x'+ photo.height+'</div>');
+			$(photoDiv).append('<div class="buttonBar">'+photo.width + ' x '+ photo.height+'</div>');
 		}
 	//});
 	};
@@ -117,11 +138,14 @@ calculateFit = function(){
 
 $( document ).ready(function() {
 	calculateFit();
+
+	window.onresize = function(event) {
+		calculateFit();
+	};
+
 });
 
-window.onresize = function(event) {
-	calculateFit();
-};
+
 
 /*
 $('body').mousemove(function(e) {
