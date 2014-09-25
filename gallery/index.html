@@ -51,7 +51,12 @@ calculateFit = function(){
 
 	devicePixelRatio = window.devicePixelRatio;
 	//ideal_height = parseInt($(window).height() / 2)
-	summed_width = photos.reduce( function(total, photo){ return total + photo.width; }, 0);
+
+	var summed_width = 0;
+	for (var i = 0; i < photos.length; i++) {
+		summed_width += photos[i].width;
+	};
+	
 	viewport_width = ($('#rightColumn').width()-1); // minus one for rounding issue
 
 	// dynamically adjust row count based on 'viewport' width
