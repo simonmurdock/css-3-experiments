@@ -15,26 +15,23 @@
   </div>
 <script>
 
-var g = {};
+function Photo() {
+	height = 0,
+	width = 0,
+	aspect_ratio = 0,
+	displayWidth = 0,
+	displayHeight = 0
+}
 
+resize = function(photo, max_width, max_height,bufferLength) {
 
-resize = function(photo, max_width, max_height) {
-
-	//var ideal = window.screen.height/5;
     var ratio = max_height / photo.height;
-
-/*
-	if(max_height > ideal){
-		max_height = ideal;
-	}
-*/
 
 	photo.newScale = {
 		width: (photo.width*ratio),
 		height: max_height // set from row sum ars
 	};
 };
-
 
 var photos, viewport_width, summed_width, rows, partition, index, row_buffer;
 
@@ -79,32 +76,31 @@ calculateFit = function(){
 	for (var i = 0; i < photos.length; i++) {
 		summed_width += (photos[i].width);
 	};
-	viewport_width = ($('#rightColumn').width()-1); // minus one for rounding issue
+
+	viewport_width = ($('#rightColumn').width()-1); // minus one for rounding anomalies in firefox
 
 	// dynamically adjust row count based on 'viewport' width
-	// remove summedwidth*devicepixel to shrink
-	rows = Math.round(summed_width / (viewport_width));
+	rows = Math.round((summed_width/ viewport_width)/2);
 
 	weights = [];
+	row_buffer = [];
+	overallIndex = 0;
+	var galleryHtml = '';
+
 	for (var z = 0; z < photos.length; z++) {
 		weights.push(photos[z].aspect_ratio)
 	};
 
 	partition = linearPartition(weights, rows);
-	index = 0;
-	row_buffer = [];
-
 
 	for (var r = 0; r < partition.length; r++) {
 		
 		var row = partition[r];
-
-		$('#container').prepend('<div id="row'+r+'"></div>'); /* prepend to maintain clear div added */
-
 		var summed_ars = 0;
 		row_buffer = [];
+
 		for (var i = 0; i < row.length; i++) {
-			row_buffer.push(photos[index++]);
+			row_buffer.push(photos[overallIndex++]);
 		};
 
 		for (var z = 0; z < row_buffer.length; z++) {
@@ -114,27 +110,14 @@ calculateFit = function(){
 		for (var i = 0; i < row_buffer.length; i++) {
 			var photo = row_buffer[i];
 			
-			// to prevent the 'bug' where a single column results in a larget hiehgt that expected it is because we are using the ratio, and its a taller image than height so its ending up taller overall. i.e height *2.1 ratio.
-			resize(photo,viewport_width / summed_ars * photo.aspect_ratio, viewport_width / summed_ars);
+			//to prevent the 'bug' where a single column results in a larger height that expected it is because we are using a ratio like 1:2.
+			resize(photo,viewport_width / summed_ars * photo.aspect_ratio, viewport_width / summed_ars,row_buffer.length);
 
-			var rowDiv = '#container #row' + r;
-			$(rowDiv).append('<div id="photo' + photo.name + '"></div>');
-			$(rowDiv).addClass('galleryRow');
-
-			var photoDiv = '#photo' + photo.name;
-			$(photoDiv).addClass('galleryPic');
-
-			$(photoDiv).css({
-				width:photo.newScale.width,
-				height:photo.newScale.height,
-				backgroundImage:'url("css/img/' + photo.name +'.png")'
-			});
-
-			$(photoDiv).append('<div class="buttonBar">'+photo.width + ' x '+ photo.height+'</div>');
+			galleryHtml += '<div class="galleryPic" style="background-image:url(css/img/' + photo.name +'.png);width:'+photo.newScale.width+'px;height:'+photo.newScale.height+'px;" id="photo' + photo.name + '"></div>';
 		}
-	//});
 	};
 
+	document.getElementById("container").innerHTML = galleryHtml;
 };
 
 $( document ).ready(function() {
@@ -145,15 +128,6 @@ $( document ).ready(function() {
 	};
 
 });
-
-
-
-/*
-$('body').mousemove(function(e) {
-	$('#rightColumn').width(e.pageX-$('#container').position().left);
-	calculateFit();
-})
-*/
 
 </script>
 </body>

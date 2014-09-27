@@ -24,13 +24,12 @@ body {
 }
 
 	#container .galleryPic {
-		background:lightgrey;
+		background:#3f3f3f;
 		float: left;
 		background-size: cover;
 		-moz-box-sizing: border-box;    /* Firefox, other Gecko */
 		box-sizing: border-box;
-		border:2px solid white;
-		/*image-rendering: optimizeSpeed;*/
+		border:1px solid white;
 	}
 		#container .galleryPic .buttonBar {
 			background-color:rgba(0,0,0,0.5);
@@ -38,6 +37,7 @@ body {
 			font-family:helvetica;
 			color:white;
 			font-size:10pt;
+			display:none;
 		}
 
 	#container .galleryRow {
