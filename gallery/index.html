@@ -114,6 +114,7 @@ calculateFit = function(){
 		for (var i = 0; i < row_buffer.length; i++) {
 			var photo = row_buffer[i];
 			
+			// to prevent the 'bug' where a single column results in a larget hiehgt that expected it is because we are using the ratio, and its a taller image than height so its ending up taller overall. i.e height *2.1 ratio.
 			resize(photo,viewport_width / summed_ars * photo.aspect_ratio, viewport_width / summed_ars);
 
 			var rowDiv = '#container #row' + r;
