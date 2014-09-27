@@ -1,8 +1,3 @@
-* {
-		-moz-transform: translateZ(0); 
-	transform: translateZ(0); 
-}
-
 body {
 	margin:0px;
 	padding:0px;
@@ -20,14 +15,12 @@ body {
 	overflow:hidden;
 }
 
-#container {
-}
+#container {}
 
 	#container .galleryPic {
-		background:#3f3f3f;
 		float: left;
 		background-size: cover;
-		-moz-box-sizing: border-box;    /* Firefox, other Gecko */
+		-moz-box-sizing: border-box;
 		box-sizing: border-box;
 		border:1px solid white;
 	}

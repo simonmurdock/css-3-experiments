@@ -4,129 +4,145 @@
   <link rel="stylesheet" href="css/css.css">
   <script type="text/javascript" src="js/jquery.js"></script>
   <script type="text/javascript" src="js/linear_partition.js"></script>
+  <script type="text/javascript" src="js/knockout-3.2.0.js"></script>
   <title>dynamic gallery</title>
 </head>
 <body>
+
+
+
   <div id='pageLayout'>
   	<div id='leftColumn'>Left Column shiz</div>
   	<div id='rightColumn'>
-  		<div id='container'></div>
+		<div id='container' data-bind="foreach: photos">
+	   		<div class="galleryPic" data-bind="style:{ width:displayWidthCss(), height:displayHeightCss(), 'background-image':url() }">
+	   		</div>
+		</div>
   	</div>
   </div>
 <script>
 
-function Photo(name, width, height) {
-	this.name = name,
-	this.height = height,
-	this.width = width,
-	this.aspectRatio = width/height,
-	this.displayWidth = 0.0,
-	this.displayHeight = 0.0
+var vm;
+
+function PhotoViewModel(name, width, height) {
+
+	this.name = name;
+	this.height = height;
+	this.width = width;
+	this.aspectRatio = width/height;
+	this.displayWidth = ko.observable(100.0);
+	this.displayHeight = ko.observable(100.0);
+	this.displayWidthCss = ko.computed(function() {
+		return this.displayWidth() + 'px';
+	}, this);
+	this.displayHeightCss = ko.computed(function() {
+		return this.displayHeight() + 'px';
+	}, this);
+	this.url = function() { return 'url("css/img/' + name + '.png")'}
+
 }
 
-resize = function(photo, max_width, max_height,bufferLength) {
+function galleryViewModel(photos) {
 
-    var ratio = max_height / photo.height;
+    var self = this;
+    self.photos = photos;
 
-    photo.displayWidth = Math.floor(photo.width*ratio);
-    photo.displayHeight = Math.floor(max_height)
-};
+	self.resize = function(photo, maxWidth, maxHeight) {
 
-clearContainer = function() {
-	document.getElementById("container").innerHTML = '';
-}
+	    var ratio = maxHeight / photo.height;
 
-populateContainer = function(html) {
-	document.getElementById("container").innerHTML = html;
-}
+	    photo.displayWidth(Math.floor(photo.width*ratio));
+	    photo.displayHeight(Math.floor(maxHeight));
+	}
 
-var photos, viewportWidth, summed_width, rows, partition, index, row_buffer;
+	self.calculateFit = function(){
 
-photos = new Array();
-photos.push(new Photo(16,297,226));
-photos.push(new Photo(17,374,245));
-photos.push(new Photo(18,512,512));
-photos.push(new Photo(19,441,286));
-photos.push(new Photo(21,277,186));
-photos.push(new Photo(23,297,123));
-photos.push(new Photo(24,182,323));
-photos.push(new Photo(25,312,153));
-photos.push(new Photo(27,297,226));
-photos.push(new Photo(28,374,245));
-photos.push(new Photo(29,512,512));
-photos.push(new Photo(30,441,286));
-photos.push(new Photo(32,277,186));
-photos.push(new Photo(34,297,123));
-photos.push(new Photo(1,181,323));
-photos.push(new Photo(2,312,153));
-photos.push(new Photo(3,1282,1660));
-photos.push(new Photo(4,297,226));
-photos.push(new Photo(5,374,245));
-photos.push(new Photo(6,512,512));
-photos.push(new Photo(8,441,286));
-photos.push(new Photo(9,1600,1067));
-photos.push(new Photo(10,277,186));
-photos.push(new Photo(11,1298,1678));
-photos.push(new Photo(12,1298,1678));
-
-calculateFit = function(){
-
-	clearContainer();
-
-	var summed_width = 0;
-	for (var i = 0; i < photos.length; i++) {
-		summed_width += (photos[i].width);
-	};
-
-	viewportWidth = document.getElementById("container").clientWidth-1;
-
-	// dynamically adjust row count based on 'viewport' width
-	rows = Math.round((summed_width/ viewportWidth)/2);
-
-	weights = [];
-	row_buffer = [];
-	overallIndex = 0;
-	var galleryHtml = '';
-
-	for (var z = 0; z < photos.length; z++) {
-		weights.push(photos[z].aspectRatio)
-	};
-
-	partition = linearPartition(weights, rows);
-
-	for (var r = 0; r < partition.length; r++) {
-		
-		var row = partition[r];
-		var summedAspectRatios = 0;
-		row_buffer = [];
-
-		for (var i = 0; i < row.length; i++) {
-			row_buffer.push(photos[overallIndex++]);
+		var summedWidth = 0;
+		for (var i = 0; i < self.photos.length; i++) {
+			summedWidth += (self.photos[i].width);
 		};
 
-		for (var z = 0; z < row_buffer.length; z++) {
-			summedAspectRatios += row_buffer[z].aspectRatio;
+		viewportWidth = document.getElementById("container").clientWidth-1;
+
+		// dynamically adjust row count based on 'viewport' width
+		rows = Math.round((summedWidth/ viewportWidth)/2);
+
+		weights = [];
+		rowBuffer = [];
+		overallIndex = 0;
+		var galleryHtml = '';
+
+		for (var z = 0; z < self.photos.length; z++) {
+			weights.push(self.photos[z].aspectRatio)
 		};
 
-		for (var i = 0; i < row_buffer.length; i++) {
-			var photo = row_buffer[i];
+		partition = linearPartition(weights, rows);
+
+		for (var r = 0; r < partition.length; r++) {
 			
-			//to prevent the 'bug' where a single column results in a larger height that expected it is because we are using a ratio like 1:2.
-			resize(photo,viewportWidth / summedAspectRatios * photo.aspectRatio, viewportWidth / summedAspectRatios,row_buffer.length);
+			var row = partition[r];
+			var summedAspectRatios = 0;
+			rowBuffer = [];
 
-			galleryHtml += '<div class="galleryPic" style="background-image:url(css/img/' + photo.name +'.png);width:'+photo.displayWidth+'px;height:'+photo.displayHeight+'px;" id="photo' + photo.name + '"></div>';
-		}
-	};
-	populateContainer(galleryHtml);
-};
+			for (var i = 0; i < row.length; i++) {
+				rowBuffer.push(self.photos[overallIndex++]);
+			};
 
+			for (var z = 0; z < rowBuffer.length; z++) {
+				summedAspectRatios += rowBuffer[z].aspectRatio;
+			};
+
+			for (var i = 0; i < rowBuffer.length; i++) {
+				var photo = rowBuffer[i];
+				
+				//to prevent the 'bug' where a single column results in a larger height that expected it is because we are using a ratio like 1:2.
+				self.resize(photo,viewportWidth / summedAspectRatios * photo.aspectRatio, viewportWidth / summedAspectRatios);
+			}
+		};
+	}
+}
+
+
+	photos = new Array();
+	/*
+	photos.push(new Photo(16,297,226));
+	photos.push(new Photo(17,374,245));
+	photos.push(new Photo(18,512,512));
+	photos.push(new Photo(19,441,286));
+	photos.push(new Photo(21,277,186));
+	photos.push(new Photo(23,297,123));
+	photos.push(new Photo(24,182,323));
+	photos.push(new Photo(25,312,153));
+	photos.push(new Photo(27,297,226));
+	photos.push(new Photo(28,374,245));
+	photos.push(new Photo(29,512,512));
+	photos.push(new Photo(30,441,286));
+	photos.push(new Photo(32,277,186));
+	photos.push(new Photo(34,297,123));*/
+	photos.push(new PhotoViewModel(1,181,323));
+	photos.push(new PhotoViewModel(2,312,153));
+	photos.push(new PhotoViewModel(3,1282,1660));
+	photos.push(new PhotoViewModel(4,297,226));
+	photos.push(new PhotoViewModel(5,374,245));
+	photos.push(new PhotoViewModel(6,512,512));
+	photos.push(new PhotoViewModel(8,441,286));
+	photos.push(new PhotoViewModel(9,1600,1067));
+	photos.push(new PhotoViewModel(10,277,186));
+	photos.push(new PhotoViewModel(11,1298,1678));
+	photos.push(new PhotoViewModel(12,1298,1678));
+	vm = new galleryViewModel(photos);
+	vm.calculateFit();
 
 $(document).ready(function() {
 
-	calculateFit();
+
+
+
+
+	ko.applyBindings(vm);
 
 	window.onresize = function(event) {
-		calculateFit();
+		vm.calculateFit();
 	};
 
 });
