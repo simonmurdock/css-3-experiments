@@ -18,12 +18,26 @@ body {
 #container {}
 
 	#container .galleryPic {
+		-webkit-animation: fadeIn100 0.4s;
+  		-webkit-animation-iteration-count: 1;
+  		-webkit-animation-fill-mode: forwards;
 		float: left;
 		background-size: cover;
-		-moz-box-sizing: border-box;
+		-moz-box-sizing: border-box;    /* Firefox, other Gecko */
 		box-sizing: border-box;
 		border:1px solid white;
 	}
+
+		@-webkit-keyframes fadeIn100
+		{
+		  from {margin-top:-50px;}
+		  to {  margin-top:0;opacity:1;}
+		}
+
+		#container .galleryPicVisible {
+			opacity:1;
+		}
+
 		#container .galleryPic .buttonBar {
 			background-color:rgba(0,0,0,0.5);
 			padding:10px;
@@ -32,6 +46,10 @@ body {
 			font-size:10pt;
 			display:none;
 		}
+
+
+		
+
 
 	#container .galleryRow {
 		clear:left;

@@ -8,117 +8,104 @@
   <title>dynamic gallery</title>
 </head>
 <body>
-
-
-
   <div id='pageLayout'>
-  	<div id='leftColumn'>Left Column shiz</div>
+  	<div id='leftColumn'>Left Column</div>
   	<div id='rightColumn'>
 		<div id='container' data-bind="foreach: photos">
-	   		<div class="galleryPic" data-bind="style:{ width:displayWidthCss(), height:displayHeightCss(), 'background-image':url() }">
+	   		<div class="galleryPic" data-bind="style:{ width:displayWidthCss(), height:displayHeightCss(), backgroundImage:url() }">
 	   		</div>
 		</div>
   	</div>
   </div>
+
 <script>
+	var vm;
 
-var vm;
+	function PhotoViewModel(name, width, height) {
 
-function PhotoViewModel(name, width, height) {
+		this.name = name;
+		this.height = height;
+		this.width = width;
+		this.aspectRatio = width/height;
+		this.displayWidth = ko.observable(100.0);
+		this.displayHeight = ko.observable(100.0);
+		this.displayWidthCss = ko.pureComputed(function() {
+			return this.displayWidth() + 'px';
+		}, this);
+		this.displayHeightCss = ko.pureComputed(function() {
+			return this.displayHeight() + 'px';
+		}, this);
+		this.url = function() { return 'url(css/img/' + name + '.png)'}
 
-	this.name = name;
-	this.height = height;
-	this.width = width;
-	this.aspectRatio = width/height;
-	this.displayWidth = ko.observable(100.0);
-	this.displayHeight = ko.observable(100.0);
-	this.displayWidthCss = ko.computed(function() {
-		return this.displayWidth() + 'px';
-	}, this);
-	this.displayHeightCss = ko.computed(function() {
-		return this.displayHeight() + 'px';
-	}, this);
-	this.url = function() { return 'url("css/img/' + name + '.png")'}
-
-}
-
-function galleryViewModel(photos) {
-
-    var self = this;
-    self.photos = photos;
-
-	self.resize = function(photo, maxWidth, maxHeight) {
-
-	    var ratio = maxHeight / photo.height;
-
-	    photo.displayWidth(Math.floor(photo.width*ratio));
-	    photo.displayHeight(Math.floor(maxHeight));
 	}
 
-	self.calculateFit = function(){
+	function galleryViewModel(photos) {
 
-		var summedWidth = 0;
-		for (var i = 0; i < self.photos.length; i++) {
-			summedWidth += (self.photos[i].width);
-		};
+	    var self = this;
 
-		viewportWidth = document.getElementById("container").clientWidth-1;
+	    self.init = function() {
 
-		// dynamically adjust row count based on 'viewport' width
-		rows = Math.round((summedWidth/ viewportWidth)/2);
+			self.photos = photos;
+	    	self.summedWidth = 0;
 
-		weights = [];
-		rowBuffer = [];
-		overallIndex = 0;
-		var galleryHtml = '';
+		    for (var i = 0; i < self.photos.length; i++) {
+				self.summedWidth += (self.photos[i].width);
+			};
+	    }
 
-		for (var z = 0; z < self.photos.length; z++) {
-			weights.push(self.photos[z].aspectRatio)
-		};
+		self.resize = function(photo, maxWidth, maxHeight) {
 
-		partition = linearPartition(weights, rows);
+		    var ratio = maxHeight / photo.height;
 
-		for (var r = 0; r < partition.length; r++) {
-			
-			var row = partition[r];
-			var summedAspectRatios = 0;
+		    photo.displayWidth(Math.floor(photo.width*ratio));
+		    photo.displayHeight(Math.floor(maxHeight));
+		}
+
+		self.calculateFit = function(){
+
+			viewportWidth = document.getElementById("container").clientWidth-1;
+			// dynamically adjust row count based on 'viewport' width
+			rows = Math.round((self.summedWidth/ viewportWidth)/2);
+
+			weights = [];
 			rowBuffer = [];
+			overallIndex = 0;
+			var galleryHtml = '';
 
-			for (var i = 0; i < row.length; i++) {
-				rowBuffer.push(self.photos[overallIndex++]);
+			for (var z = 0; z < self.photos.length; z++) {
+				weights.push(self.photos[z].aspectRatio)
 			};
 
-			for (var z = 0; z < rowBuffer.length; z++) {
-				summedAspectRatios += rowBuffer[z].aspectRatio;
-			};
+			partition = linearPartition(weights, rows);
 
-			for (var i = 0; i < rowBuffer.length; i++) {
-				var photo = rowBuffer[i];
+			for (var r = 0; r < partition.length; r++) {
 				
-				//to prevent the 'bug' where a single column results in a larger height that expected it is because we are using a ratio like 1:2.
-				self.resize(photo,viewportWidth / summedAspectRatios * photo.aspectRatio, viewportWidth / summedAspectRatios);
-			}
-		};
-	}
-}
+				var row = partition[r];
+				var summedAspectRatios = 0;
+				rowBuffer = [];
 
+				for (var i = 0; i < row.length; i++) {
+					rowBuffer.push(self.photos[overallIndex++]);
+				};
+
+				for (var z = 0; z < rowBuffer.length; z++) {
+					summedAspectRatios += rowBuffer[z].aspectRatio;
+				};
+
+				for (var i = 0; i < rowBuffer.length; i++) {
+					var photo = rowBuffer[i];
+					
+					//to prevent the 'bug' where a single column results in a larger height that expected it is because we are using a ratio like 1:2.
+					self.resize(photo,viewportWidth / summedAspectRatios * photo.aspectRatio, viewportWidth / summedAspectRatios);
+				}
+			};
+		}
+
+		self.init();
+		self.calculateFit();
+	}
 
 	photos = new Array();
-	/*
-	photos.push(new Photo(16,297,226));
-	photos.push(new Photo(17,374,245));
-	photos.push(new Photo(18,512,512));
-	photos.push(new Photo(19,441,286));
-	photos.push(new Photo(21,277,186));
-	photos.push(new Photo(23,297,123));
-	photos.push(new Photo(24,182,323));
-	photos.push(new Photo(25,312,153));
-	photos.push(new Photo(27,297,226));
-	photos.push(new Photo(28,374,245));
-	photos.push(new Photo(29,512,512));
-	photos.push(new Photo(30,441,286));
-	photos.push(new Photo(32,277,186));
-	photos.push(new Photo(34,297,123));*/
 	photos.push(new PhotoViewModel(1,181,323));
 	photos.push(new PhotoViewModel(2,312,153));
 	photos.push(new PhotoViewModel(3,1282,1660));
@@ -130,23 +117,18 @@ function galleryViewModel(photos) {
 	photos.push(new PhotoViewModel(10,277,186));
 	photos.push(new PhotoViewModel(11,1298,1678));
 	photos.push(new PhotoViewModel(12,1298,1678));
-	vm = new galleryViewModel(photos);
-	vm.calculateFit();
 
-$(document).ready(function() {
+	$(document).ready(function() {
 
+		vm = new galleryViewModel(photos);
+		ko.applyBindings(vm);
 
+		window.onresize = function(event) {
+			vm.calculateFit();
+		};
 
-
-
-	ko.applyBindings(vm);
-
-	window.onresize = function(event) {
-		vm.calculateFit();
-	};
-
-});
+	});
 
 </script>
 </body>
-</html
+</html>
