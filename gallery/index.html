@@ -153,7 +153,17 @@
 		ko.applyBindings(vm);
 
 		$('#addAssetButton').on('click', function(){
-
+			vm.photos.push(new PhotoViewModel(12,1298,1678));
+			vm.photos.push(new PhotoViewModel(2,312,153));
+			vm.photos.push(new PhotoViewModel(3,1282,1660));
+			vm.photos.push(new PhotoViewModel(1,181,323));
+			vm.photos.push(new PhotoViewModel(2,312,153));
+			vm.photos.push(new PhotoViewModel(6,512,512));
+			vm.photos.push(new PhotoViewModel(6,512,512));
+			vm.photos.push(new PhotoViewModel(8,441,286));
+			vm.photos.push(new PhotoViewModel(9,1600,1067));
+			vm.photos.push(new PhotoViewModel(10,277,186));
+			vm.photos.push(new PhotoViewModel(11,1298,1678));
 			vm.photos.push(new PhotoViewModel(12,1298,1678));
 			vm.calculateFit()
 		});
