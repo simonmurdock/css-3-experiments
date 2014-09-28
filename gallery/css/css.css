@@ -33,7 +33,9 @@ input {
 	}
 
 	#rightColumn {
-		overflow:hidden;
+		padding-left:200px;
+		padding-top:100px;
+		overflow:visible;
 	}
 
 		#container {
@@ -45,6 +47,7 @@ input {
 			#pageContainer {
 				opacity:0;
 				clear:left;
+				position;relative;
 				-webkit-animation: fadeIn100 0.7s;
 			  	-webkit-animation-iteration-count: 1;
 			  	-webkit-animation-fill-mode: forwards;
@@ -60,17 +63,15 @@ input {
 			}
 
 				#pageContainer .galleryPic {
+					overflow:visible;
 					border:1px solid white;
 					background:grey;
 					background-size: cover;
 					float: left;
+					position:relative;
 					-webkit-box-sizing: border-box;
 					   -moz-box-sizing: border-box;
 					        box-sizing: border-box;
-				}
-
-				#pageContainer .galleryPic:hover .infoBar {
-					opacity:1;
 				}
 
 				#pageContainer .galleryPic .infoBar {
@@ -86,7 +87,36 @@ input {
 					font-size:9pt;
 					color:white;
 					height:100%;
+					display:none;
+				}
+
+				#pageContainer .galleryPic:hover .galleryPicPopup {
+					opacity:1;
+				}
+
+				#pageContainer .galleryPic .galleryPicPopup {
+					position:absolute;
+					left:-40%;
+					top:-40%;
+					height:inherit;
+					width:inherit;
 					opacity:0;
+					min-width:100px;
+					min-height:100px;
+				}
+
+				#pageContainer .galleryPic .galleryPicPopup .galleryPicPopupContent {
+					width:180%;
+					height:180%;
+					position:absolute;
+					background-color:rgba(0,0,0,0.6);
+					background-size:cover;
+					border-radius:4px;
+					color:white;
+					padding:10px;
+					font-family: helvetica;
+					z-index:999;
+					box-shadow: 0 10px 20px rgba(0,0,0,0.3), 0 6px 6px rgba(0,0,0,0.63);
 				}
 
 				#pageContainer .galleryPic .infoBar .code {

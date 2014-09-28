@@ -16,6 +16,9 @@
 		<div id='container' data-bind="foreach: pages()">
 			<div id='pageContainer' data-bind="foreach: photos()">
 	   			<div class="galleryPic" data-bind="style:{ width:displayWidthCss(), height:displayHeightCss(), backgroundImage:url() }">
+	   				<div class='galleryPicPopup'>
+	   					<div data-bind="style:{  backgroundImage:url() }" class='galleryPicPopupContent'></div>
+	   				</div>
 	   				<div class='infoBar' data-bind='text:width+"x"+height'></div>
 	   			</div>
 	   		</div>
