@@ -69,13 +69,29 @@ input {
 					        box-sizing: border-box;
 				}
 
-				#pageContainer .galleryPic .buttonBar {
-					background-color:rgba(0,0,0,0.5);
+				#pageContainer .galleryPic:hover .infoBar {
+					opacity:1;
+				}
+
+				#pageContainer .galleryPic .infoBar {
+					-webkit-transition: opacity 0.2s;
+					   -moz-transition: opacity 0.2s;
+							transition: opacity 0.2s;
+					-webkit-box-sizing: border-box;
+					   -moz-box-sizing: border-box;
+					        box-sizing: border-box;
+					background-color:rgba(0,0,0,0.6);
 					padding:10px;
 					font-family:helvetica;
-					font-size:10pt;
+					font-size:9pt;
 					color:white;
-					display:none;
+					height:100%;
+					opacity:0;
+				}
+
+				#pageContainer .galleryPic .infoBar .code {
+					float:right;
+					color:white;
 				}
 
 .clear {

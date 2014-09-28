@@ -15,7 +15,9 @@
   	<div id='rightColumn'>
 		<div id='container' data-bind="foreach: pages()">
 			<div id='pageContainer' data-bind="foreach: photos()">
-	   			<div class="galleryPic" data-bind="style:{ width:displayWidthCss(), height:displayHeightCss(), backgroundImage:url() }"></div>
+	   			<div class="galleryPic" data-bind="style:{ width:displayWidthCss(), height:displayHeightCss(), backgroundImage:url() }">
+	   				<div class='infoBar' data-bind='text:width+"x"+height'></div>
+	   			</div>
 	   		</div>
 		</div>
   	</div>
@@ -127,7 +129,7 @@
 	$(document).ready(function() {
 
 		var testPage = new PageViewModel();
-			testPage.photos.push(new PhotoViewModel(1,181,323));
+			testPage.photos.push(new PhotoViewModel(1,323,180));
 			testPage.photos.push(new PhotoViewModel(2,312,153));
 			testPage.photos.push(new PhotoViewModel(3,1282,1660));
 			testPage.photos.push(new PhotoViewModel(4,297,226));
@@ -145,8 +147,7 @@
 
 		$('#addAssetButton').on('click', function(){
 
-			var testPage = new PageViewModel();	
-			testPage.photos.push(new PhotoViewModel(22,Math.floor(Math.random() * 1000),Math.floor(Math.random() * 1000)));
+			var testPage = new PageViewModel();
 			testPage.photos.push(new PhotoViewModel(32,1282,1660));
 			testPage.photos.push(new PhotoViewModel(43,297,226));
 			testPage.photos.push(new PhotoViewModel(119,1298,1678));
@@ -159,7 +160,6 @@
 			testPage.photos.push(new PhotoViewModel(120,1298,1678));
 			vm.addPage(testPage);
 			vm.calculateFit();
-
 		});
 
 	});
