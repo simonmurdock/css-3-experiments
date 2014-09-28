@@ -9,19 +9,24 @@
 </head>
 <body>
   <div id='pageLayout'>
-  	<div id='buttons'>
-  		<input type='button' value='Add a photo' id='addAssetButton'></input>
-  		<input type='button' value='Remove a photo' id='removeAssetButton'></input>
+  	<div id='leftColumn'>
+  		<input type='button' value='Add a page' id='addAssetButton'></input>
   	</div>
-  	<div id='leftColumn'></div>
   	<div id='rightColumn'>
-		<div id='container' data-bind="foreach: photos()">
-	   		<div class="galleryPic" data-bind="style:{ width:displayWidthCss(), height:displayHeightCss(), backgroundImage:url() }"></div>
+		<div id='container' data-bind="foreach: pages()">
+			<div id='pageContainer' data-bind="foreach: photos()">
+	   			<div class="galleryPic" data-bind="style:{ width:displayWidthCss(), height:displayHeightCss(), backgroundImage:url() }"></div>
+	   		</div>
 		</div>
   	</div>
   </div>
 
 <script>
+
+	function PageViewModel() {
+		var self = this;
+		self.photos = ko.observableArray();
+	}
 
 	function PhotoViewModel(name, width, height) {
 
@@ -31,28 +36,36 @@
 		this.aspectRatio = width/height;
 		this.displayWidth = ko.observable(100.0);
 		this.displayHeight = ko.observable(100.0);
+
 		this.displayWidthCss = ko.pureComputed(function() {
 			return this.displayWidth() + 'px';
 		}, this);
+
 		this.displayHeightCss = ko.pureComputed(function() {
 			return this.displayHeight() + 'px';
 		}, this);
+
 		this.url = function() { return 'url(css/img/' + name + '.png)'}
 	}
 
-	function galleryViewModel(photos) {
+	function galleryViewModel() {
 
 	    var self = this;
+		self.pages = ko.observableArray();
 
 	    self.init = function() {
 
-			self.photos = photos;
+			self.calculateFit();
 
 			window.onresize = function(event) {
 				vm.calculateFit();
 			}
+	    }
 
-			self.calculateFit();
+	    self.addPage = function(page){
+
+	    	self.pages.push(page);
+	    	self.calculateFit();
 	    }
 
 		self.resize = function(photo, maxWidth, maxHeight) {
@@ -65,113 +78,88 @@
 
 		self.calculateFit = function(){
 
-			self.weights = [];
-			self.rowBuffer = [];
-			self.overallIndex = 0;
-			self.summedWidth = 0;
-
-			for (var i = 0; i < self.photos().length; i++) {
-				self.summedWidth += (self.photos()[i].width);
-				self.weights.push(self.photos()[i].aspectRatio)
-			};
-
-			self.viewportWidth = document.getElementById("container").clientWidth;
-			self.rows = Math.round((self.summedWidth/ self.viewportWidth/2));
-			self.partition = linearPartition(self.weights, self.rows);
-
-			for (var r = 0; r < self.partition.length; r++) {
+			for (var p = 0; p < self.pages().length; p++) {
 				
-				self.row = self.partition[r];
-				self.rowSummedAspectRatios = 0;
-				self.rowSummedWidth = 0;
+				self.summedWidth = 0;
+				self.overallIndex = 0;
+				self.weights = [];
 				self.rowBuffer = [];
+				self.overallIndex = 0;
 
-				for (var i = 0; i < self.row.length; i++) {
-					self.rowBuffer.push(self.photos()[self.overallIndex++]);
+				self.photos = self.pages()[p].photos;
+
+				for (var i = 0; i < self.photos().length; i++) {
+					self.summedWidth += (self.photos()[i].width);
+					self.weights.push(self.photos()[i].aspectRatio)
 				};
 
-				for (var z = 0; z < self.rowBuffer.length; z++) {
-					self.rowSummedAspectRatios += self.rowBuffer[z].aspectRatio;
-				};
+				self.viewportWidth = document.getElementById("container").clientWidth;
+				self.rows = Math.round((self.summedWidth/ self.viewportWidth/4));
+				self.partition = linearPartition(self.weights, self.rows);
 
-				for (var i = 0; i < self.rowBuffer.length; i++) {
-					self.resize(self.rowBuffer[i],self.viewportWidth / self.rowSummedAspectRatios * self.rowBuffer[i].aspectRatio, self.viewportWidth / self.rowSummedAspectRatios);
-				}
-			};
+				for (var r = 0; r < self.partition.length; r++) {
+					
+					self.row = self.partition[r];
+					self.rowSummedAspectRatios = 0;
+					self.rowSummedWidth = 0;
+					self.rowBuffer = [];
+
+					for (var i = 0; i < self.row.length; i++) {
+						self.rowBuffer.push(self.photos()[self.overallIndex++]);
+					};
+
+					for (var z = 0; z < self.rowBuffer.length; z++) {
+						self.rowSummedAspectRatios += self.rowBuffer[z].aspectRatio;
+					};
+
+					for (var i = 0; i < self.rowBuffer.length; i++) {
+						self.resize(self.rowBuffer[i],self.viewportWidth / self.rowSummedAspectRatios * self.rowBuffer[i].aspectRatio, self.viewportWidth / self.rowSummedAspectRatios);
+					}
+				};
+			}
 		}
 
 		self.init();
 	}
 
-	var photoSet = new ko.observableArray([
-		new PhotoViewModel(1,181,323),
-		new PhotoViewModel(2,312,153),
-		new PhotoViewModel(3,1282,1660),
-		new PhotoViewModel(4,297,226),
-		new PhotoViewModel(5,374,245),
-		new PhotoViewModel(6,512,512),
-		new PhotoViewModel(8,441,286),
-		new PhotoViewModel(9,1600,1067),
-		new PhotoViewModel(10,277,186),
-		new PhotoViewModel(11,1298,1678),
-		new PhotoViewModel(12,1298,1678),
-		new PhotoViewModel(1,181,323),
-		new PhotoViewModel(2,312,153),
-		new PhotoViewModel(3,1282,1660),
-		new PhotoViewModel(1,181,323),
-		new PhotoViewModel(2,312,153),
-		new PhotoViewModel(6,512,512),
-		new PhotoViewModel(8,441,286),
-		new PhotoViewModel(9,1600,1067),
-		new PhotoViewModel(10,277,186),
-		new PhotoViewModel(3,1282,1660),
-		new PhotoViewModel(4,297,226),
-		new PhotoViewModel(6,512,512),
-		new PhotoViewModel(8,441,286),
-		new PhotoViewModel(10,277,186),
-		new PhotoViewModel(5,374,245),
-		new PhotoViewModel(6,512,512),
-		new PhotoViewModel(8,441,286),
-		new PhotoViewModel(9,1600,1067),
-		new PhotoViewModel(10,277,186),
-		new PhotoViewModel(11,1298,1678),
-		new PhotoViewModel(4,297,226),
-		new PhotoViewModel(5,374,245),
-		new PhotoViewModel(6,512,512),
-		new PhotoViewModel(8,441,286),
-		new PhotoViewModel(9,1600,1067),
-		new PhotoViewModel(10,277,186),
-		new PhotoViewModel(11,1298,1678),
-		new PhotoViewModel(12,1298,1678)
-	]);
-
 	var vm;
 
 	$(document).ready(function() {
 
-		vm = new galleryViewModel(photoSet);
+		var testPage = new PageViewModel();
+			testPage.photos.push(new PhotoViewModel(1,181,323));
+			testPage.photos.push(new PhotoViewModel(2,312,153));
+			testPage.photos.push(new PhotoViewModel(3,1282,1660));
+			testPage.photos.push(new PhotoViewModel(4,297,226));
+			testPage.photos.push(new PhotoViewModel(5,374,245));
+			testPage.photos.push(new PhotoViewModel(6,512,512));
+			testPage.photos.push(new PhotoViewModel(8,441,286));
+			testPage.photos.push(new PhotoViewModel(9,1600,1067));
+			testPage.photos.push(new PhotoViewModel(10,277,186));
+			testPage.photos.push(new PhotoViewModel(11,1298,1678));
+			testPage.photos.push(new PhotoViewModel(12,1298,1678));
+
+		vm = new galleryViewModel();
+		vm.addPage(testPage);
 		ko.applyBindings(vm);
 
 		$('#addAssetButton').on('click', function(){
-			vm.photos.push(new PhotoViewModel(12,1298,1678));
-			vm.photos.push(new PhotoViewModel(2,312,153));
-			vm.photos.push(new PhotoViewModel(3,1282,1660));
-			vm.photos.push(new PhotoViewModel(1,181,323));
-			vm.photos.push(new PhotoViewModel(2,312,153));
-			vm.photos.push(new PhotoViewModel(6,512,512));
-			vm.photos.push(new PhotoViewModel(6,512,512));
-			vm.photos.push(new PhotoViewModel(8,441,286));
-			vm.photos.push(new PhotoViewModel(9,1600,1067));
-			vm.photos.push(new PhotoViewModel(10,277,186));
-			vm.photos.push(new PhotoViewModel(11,1298,1678));
-			vm.photos.push(new PhotoViewModel(12,1298,1678));
-			vm.calculateFit()
-		});
 
-		$('#removeAssetButton').on('click', function(){
-
-			vm.photos.pop();
+			var testPage = new PageViewModel();	
+			testPage.photos.push(new PhotoViewModel(22,Math.floor(Math.random() * 1000),Math.floor(Math.random() * 1000)));
+			testPage.photos.push(new PhotoViewModel(32,1282,1660));
+			testPage.photos.push(new PhotoViewModel(43,297,226));
+			testPage.photos.push(new PhotoViewModel(119,1298,1678));
+			testPage.photos.push(new PhotoViewModel(15,181,323));
+			testPage.photos.push(new PhotoViewModel(180,277,186));
+			testPage.photos.push(new PhotoViewModel(54,374,245));
+			testPage.photos.push(new PhotoViewModel(65,512,512));
+			testPage.photos.push(new PhotoViewModel(86,441,286));
+			testPage.photos.push(new PhotoViewModel(97,1600,1067));
+			testPage.photos.push(new PhotoViewModel(120,1298,1678));
+			vm.addPage(testPage);
 			vm.calculateFit();
+
 		});
 
 	});

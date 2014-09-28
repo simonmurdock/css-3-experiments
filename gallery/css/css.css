@@ -1,3 +1,21 @@
+@-webkit-keyframes fadeIn100
+{
+  from { opacity:0; -webkit-transform: rotateX(-120deg); }
+    to { opacity:1; -webkit-transform: rotateX(0deg); }
+}
+
+@-moz-keyframes fadeIn100
+{
+  from { opacity:0; -moz-transform: rotateX(-120deg); }
+    to { opacity:1; -moz-transform: rotateX(0deg); }
+}
+
+@keyframes fadeIn100
+{
+  from { opacity:0; -transform: rotateX(-120deg); }
+    to { opacity:1; -transform: rotateX(0deg); }
+}
+
 body {
 	margin:0px;
 	padding:0px;
@@ -7,62 +25,58 @@ input {
 	margin:10px;
 }
 
-#pageLayout {
-}
+#pageLayout {}
 
-#leftColumn {
-	width:200px;
-	float:left;
-}
-#buttons {
-	position:absolute;
-	top:0;
-	left:0;
-	padding:10px;
-}
-
-#rightColumn {
-	overflow:hidden;
-}
-
-#container {
-	background-color:#eeff00;
-}
-
-	#container .galleryPic {
-		background:grey;
-		-webkit-animation: fadeIn100 0.4s;
-  		-webkit-animation-iteration-count: 1;
-  		-webkit-animation-fill-mode: forwards;
-		float: left;
-		background-size: cover;
-		-moz-box-sizing: border-box;    /* Firefox, other Gecko */
-		box-sizing: border-box;
-		border:1px solid white;
+	#leftColumn {
+		width:200px;
+		float:left;
 	}
 
-		@-webkit-keyframes fadeIn100
-		{
-		  from {margin-top:-50px;}
-		  to {  margin-top:0;opacity:1;}
-		}
-
-		#container .galleryPicVisible {
-			opacity:1;
-		}
-
-		#container .galleryPic .buttonBar {
-			background-color:rgba(0,0,0,0.5);
-			padding:10px;
-			font-family:helvetica;
-			color:white;
-			font-size:10pt;
-			display:none;
-		}
-
-	#container .galleryRow {
-		clear:left;
+	#rightColumn {
+		overflow:hidden;
 	}
+
+		#container {
+		  -webkit-perspective: 800px;
+		     -moz-perspective: 800px;
+		          perspective: 800px;
+		}
+
+			#pageContainer {
+				opacity:0;
+				clear:left;
+				-webkit-animation: fadeIn100 0.7s;
+			  	-webkit-animation-iteration-count: 1;
+			  	-webkit-animation-fill-mode: forwards;
+			  	   -moz-animation: fadeIn100 0.7s;
+			  	   -moz-animation-iteration-count: 1;
+			  	   -moz-animation-fill-mode: forwards;
+			  	        animation: fadeIn100 0.7s;
+			  	        animation-iteration-count: 1;
+			  	        animation-fill-mode: forwards;
+			  	-webkit-transform-style: preserve-3d;
+			  	   -moz-transform-style: preserve-3d;
+				        transform-style: preserve-3d;
+			}
+
+				#pageContainer .galleryPic {
+					border:1px solid white;
+					background:grey;
+					background-size: cover;
+					float: left;
+					-webkit-box-sizing: border-box;
+					   -moz-box-sizing: border-box;
+					        box-sizing: border-box;
+				}
+
+				#pageContainer .galleryPic .buttonBar {
+					background-color:rgba(0,0,0,0.5);
+					padding:10px;
+					font-family:helvetica;
+					font-size:10pt;
+					color:white;
+					display:none;
+				}
 
 .clear {
 	clear:both;
