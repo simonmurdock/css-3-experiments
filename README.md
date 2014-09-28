@@ -3,6 +3,10 @@ CSS3 experiments
 
 Public storage for some CSS3 demos I have put together.
 
+Gallery
+------
+Demo of a linear partition algorithm being used to create a dynamic & seemless gallery layout. Designed to work given a randomly sized batch of images.
+
 3D Cube with shadow
 ------
 Simulated semi-realistic soft shadowing below a cube
