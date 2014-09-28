@@ -9,9 +9,12 @@
 </head>
 <body>
   <div id='pageLayout'>
-  	<div id='leftColumn'>Left Column</div>
+  	<div id='leftColumn'>
+  		<input type='button' value='Add a photo' id='addAssetButton'></input>
+  		<input type='button' value='Remove a photo' id='removeAssetButton'></input>
+  	</div>
   	<div id='rightColumn'>
-		<div id='container' data-bind="foreach: photos">
+		<div id='container' data-bind="foreach: photos()">
 	   		<div class="galleryPic" data-bind="style:{ width:displayWidthCss(), height:displayHeightCss(), backgroundImage:url() }">
 	   		</div>
 		</div>
@@ -19,7 +22,6 @@
   </div>
 
 <script>
-	var vm;
 
 	function PhotoViewModel(name, width, height) {
 
@@ -36,7 +38,6 @@
 			return this.displayHeight() + 'px';
 		}, this);
 		this.url = function() { return 'url(css/img/' + name + '.png)'}
-
 	}
 
 	function galleryViewModel(photos) {
@@ -46,11 +47,12 @@
 	    self.init = function() {
 
 			self.photos = photos;
-	    	self.summedWidth = 0;
 
-		    for (var i = 0; i < self.photos.length; i++) {
-				self.summedWidth += (self.photos[i].width);
-			};
+			window.onresize = function(event) {
+				vm.calculateFit();
+			}
+
+			self.calculateFit();
 	    }
 
 		self.resize = function(photo, maxWidth, maxHeight) {
@@ -63,69 +65,77 @@
 
 		self.calculateFit = function(){
 
-			viewportWidth = document.getElementById("container").clientWidth-1;
-			// dynamically adjust row count based on 'viewport' width
-			rows = Math.round((self.summedWidth/ viewportWidth)/2);
-
 			weights = [];
 			rowBuffer = [];
 			overallIndex = 0;
-			var galleryHtml = '';
+			summedWidth = 0;
 
-			for (var z = 0; z < self.photos.length; z++) {
-				weights.push(self.photos[z].aspectRatio)
+			for (var i = 0; i < self.photos().length; i++) {
+				summedWidth += (self.photos()[i].width);
+				weights.push(self.photos()[i].aspectRatio)
 			};
 
+			viewportWidth = document.getElementById("container").clientWidth-1;
+			rows = Math.round((summedWidth/ viewportWidth)/2);
+			console.log('rows',rows);
 			partition = linearPartition(weights, rows);
 
 			for (var r = 0; r < partition.length; r++) {
 				
 				var row = partition[r];
-				var summedAspectRatios = 0;
+				var rowSummedAspectRatios = 0;
 				rowBuffer = [];
 
 				for (var i = 0; i < row.length; i++) {
-					rowBuffer.push(self.photos[overallIndex++]);
+					rowBuffer.push(self.photos()[overallIndex++]);
 				};
 
 				for (var z = 0; z < rowBuffer.length; z++) {
-					summedAspectRatios += rowBuffer[z].aspectRatio;
+					rowSummedAspectRatios += rowBuffer[z].aspectRatio;
 				};
 
 				for (var i = 0; i < rowBuffer.length; i++) {
-					var photo = rowBuffer[i];
-					
 					//to prevent the 'bug' where a single column results in a larger height that expected it is because we are using a ratio like 1:2.
-					self.resize(photo,viewportWidth / summedAspectRatios * photo.aspectRatio, viewportWidth / summedAspectRatios);
+					self.resize(rowBuffer[i],viewportWidth / rowSummedAspectRatios * rowBuffer[i].aspectRatio, viewportWidth / rowSummedAspectRatios);
 				}
 			};
 		}
 
 		self.init();
-		self.calculateFit();
 	}
 
-	photos = new Array();
-	photos.push(new PhotoViewModel(1,181,323));
-	photos.push(new PhotoViewModel(2,312,153));
-	photos.push(new PhotoViewModel(3,1282,1660));
-	photos.push(new PhotoViewModel(4,297,226));
-	photos.push(new PhotoViewModel(5,374,245));
-	photos.push(new PhotoViewModel(6,512,512));
-	photos.push(new PhotoViewModel(8,441,286));
-	photos.push(new PhotoViewModel(9,1600,1067));
-	photos.push(new PhotoViewModel(10,277,186));
-	photos.push(new PhotoViewModel(11,1298,1678));
-	photos.push(new PhotoViewModel(12,1298,1678));
+	var photoSet = new ko.observableArray([
+		new PhotoViewModel(1,181,323),
+		new PhotoViewModel(2,312,153),
+		new PhotoViewModel(3,1282,1660),
+		new PhotoViewModel(4,297,226),
+		new PhotoViewModel(5,374,245),
+		new PhotoViewModel(6,512,512),
+		new PhotoViewModel(8,441,286),
+		new PhotoViewModel(9,1600,1067),
+		new PhotoViewModel(10,277,186),
+		new PhotoViewModel(11,1298,1678),
+		new PhotoViewModel(12,1298,1678)
+	]);
+
+	var vm;
 
 	$(document).ready(function() {
 
-		vm = new galleryViewModel(photos);
+		vm = new galleryViewModel(photoSet);
 		ko.applyBindings(vm);
 
-		window.onresize = function(event) {
+		$('#addAssetButton').on('click', function(){
+
+			vm.photos.push(new PhotoViewModel(12,1298,1678));
+			vm.calculateFit()
+		});
+
+		$('#removeAssetButton').on('click', function(){
+
+			vm.photos.pop();
 			vm.calculateFit();
-		};
+		});
 
 	});
 

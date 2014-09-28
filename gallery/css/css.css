@@ -3,6 +3,10 @@ body {
 	padding:0px;
 }
 
+input {
+	margin:10px;
+}
+
 #pageLayout {
 }
 
