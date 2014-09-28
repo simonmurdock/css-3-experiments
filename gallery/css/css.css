@@ -14,14 +14,23 @@ input {
 	width:200px;
 	float:left;
 }
+#buttons {
+	position:absolute;
+	top:0;
+	left:0;
+	padding:10px;
+}
 
 #rightColumn {
 	overflow:hidden;
 }
 
-#container {}
+#container {
+	background-color:#eeff00;
+}
 
 	#container .galleryPic {
+		background:grey;
 		-webkit-animation: fadeIn100 0.4s;
   		-webkit-animation-iteration-count: 1;
   		-webkit-animation-fill-mode: forwards;

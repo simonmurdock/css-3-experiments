@@ -9,14 +9,14 @@
 </head>
 <body>
   <div id='pageLayout'>
-  	<div id='leftColumn'>
+  	<div id='buttons'>
   		<input type='button' value='Add a photo' id='addAssetButton'></input>
   		<input type='button' value='Remove a photo' id='removeAssetButton'></input>
   	</div>
+  	<div id='leftColumn'></div>
   	<div id='rightColumn'>
 		<div id='container' data-bind="foreach: photos()">
-	   		<div class="galleryPic" data-bind="style:{ width:displayWidthCss(), height:displayHeightCss(), backgroundImage:url() }">
-	   		</div>
+	   		<div class="galleryPic" data-bind="style:{ width:displayWidthCss(), height:displayHeightCss(), backgroundImage:url() }"></div>
 		</div>
   	</div>
   </div>
@@ -65,38 +65,37 @@
 
 		self.calculateFit = function(){
 
-			weights = [];
-			rowBuffer = [];
-			overallIndex = 0;
-			summedWidth = 0;
+			self.weights = [];
+			self.rowBuffer = [];
+			self.overallIndex = 0;
+			self.summedWidth = 0;
 
 			for (var i = 0; i < self.photos().length; i++) {
-				summedWidth += (self.photos()[i].width);
-				weights.push(self.photos()[i].aspectRatio)
+				self.summedWidth += (self.photos()[i].width);
+				self.weights.push(self.photos()[i].aspectRatio)
 			};
 
-			viewportWidth = document.getElementById("container").clientWidth-1;
-			rows = Math.round((summedWidth/ viewportWidth)/2);
-			console.log('rows',rows);
-			partition = linearPartition(weights, rows);
+			self.viewportWidth = document.getElementById("container").clientWidth;
+			self.rows = Math.round((self.summedWidth/ self.viewportWidth/2));
+			self.partition = linearPartition(self.weights, self.rows);
 
-			for (var r = 0; r < partition.length; r++) {
+			for (var r = 0; r < self.partition.length; r++) {
 				
-				var row = partition[r];
-				var rowSummedAspectRatios = 0;
-				rowBuffer = [];
+				self.row = self.partition[r];
+				self.rowSummedAspectRatios = 0;
+				self.rowSummedWidth = 0;
+				self.rowBuffer = [];
 
-				for (var i = 0; i < row.length; i++) {
-					rowBuffer.push(self.photos()[overallIndex++]);
+				for (var i = 0; i < self.row.length; i++) {
+					self.rowBuffer.push(self.photos()[self.overallIndex++]);
 				};
 
-				for (var z = 0; z < rowBuffer.length; z++) {
-					rowSummedAspectRatios += rowBuffer[z].aspectRatio;
+				for (var z = 0; z < self.rowBuffer.length; z++) {
+					self.rowSummedAspectRatios += self.rowBuffer[z].aspectRatio;
 				};
 
-				for (var i = 0; i < rowBuffer.length; i++) {
-					//to prevent the 'bug' where a single column results in a larger height that expected it is because we are using a ratio like 1:2.
-					self.resize(rowBuffer[i],viewportWidth / rowSummedAspectRatios * rowBuffer[i].aspectRatio, viewportWidth / rowSummedAspectRatios);
+				for (var i = 0; i < self.rowBuffer.length; i++) {
+					self.resize(self.rowBuffer[i],self.viewportWidth / self.rowSummedAspectRatios * self.rowBuffer[i].aspectRatio, self.viewportWidth / self.rowSummedAspectRatios);
 				}
 			};
 		}
@@ -108,6 +107,34 @@
 		new PhotoViewModel(1,181,323),
 		new PhotoViewModel(2,312,153),
 		new PhotoViewModel(3,1282,1660),
+		new PhotoViewModel(4,297,226),
+		new PhotoViewModel(5,374,245),
+		new PhotoViewModel(6,512,512),
+		new PhotoViewModel(8,441,286),
+		new PhotoViewModel(9,1600,1067),
+		new PhotoViewModel(10,277,186),
+		new PhotoViewModel(11,1298,1678),
+		new PhotoViewModel(12,1298,1678),
+		new PhotoViewModel(1,181,323),
+		new PhotoViewModel(2,312,153),
+		new PhotoViewModel(3,1282,1660),
+		new PhotoViewModel(1,181,323),
+		new PhotoViewModel(2,312,153),
+		new PhotoViewModel(6,512,512),
+		new PhotoViewModel(8,441,286),
+		new PhotoViewModel(9,1600,1067),
+		new PhotoViewModel(10,277,186),
+		new PhotoViewModel(3,1282,1660),
+		new PhotoViewModel(4,297,226),
+		new PhotoViewModel(6,512,512),
+		new PhotoViewModel(8,441,286),
+		new PhotoViewModel(10,277,186),
+		new PhotoViewModel(5,374,245),
+		new PhotoViewModel(6,512,512),
+		new PhotoViewModel(8,441,286),
+		new PhotoViewModel(9,1600,1067),
+		new PhotoViewModel(10,277,186),
+		new PhotoViewModel(11,1298,1678),
 		new PhotoViewModel(4,297,226),
 		new PhotoViewModel(5,374,245),
 		new PhotoViewModel(6,512,512),
