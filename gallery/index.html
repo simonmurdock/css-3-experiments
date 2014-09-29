@@ -1,29 +1,41 @@
 
 <html>
-<head>
-  <link rel="stylesheet" href="css/css.css">
-  <script type="text/javascript" src="js/jquery.js"></script>
-  <script type="text/javascript" src="js/linear_partition.js"></script>
-  <script type="text/javascript" src="js/knockout-3.2.0.js"></script>
-  <title>dynamic gallery</title>
-</head>
+	<head>
+		<link rel="stylesheet" href="css/css.css">
+		<script type="text/javascript" src="js/jquery.js"></script>
+		<script type="text/javascript" src="js/linear_partition.js"></script>
+		<script type="text/javascript" src="js/knockout-3.2.0.js"></script>
+		<title>dynamic gallery</title>
+	</head>
 <body>
-  <div id='pageLayout'>
-  	<div id='leftColumn'>
-  		<input type='button' value='Add a page' id='addAssetButton'></input>
-  	</div>
-  	<div id='rightColumn'>
+<div id='pageLayout'>
+	<div id='leftColumn'>
+		<input type='button' value='Add a page' id='addAssetButton'></input>
+	</div>
+	<div id='rightColumn'>
 		<div id='container' data-bind='foreach: pages()'>
 			<div id='pageContainer' data-bind='foreach: photos()'>
-	   			<div class='asset' data-bind='style:{ width:displayWidthCss(), height:displayHeightCss(), backgroundImage:url() }'>
-	   				<div data-bind="style:{  backgroundImage:url()}" class='assetPopup'>
-	   					<div class='infoBar' data-bind='text:width+"x"+height'></div>	
-	   				</div>
-	   			</div>
-	   		</div>
+				<div class='asset' data-bind='style:{ width:displayWidthCss(), height:displayHeightCss(), backgroundImage:url() }'>
+					<div class='assetPopup' data-bind="style:{ backgroundImage:url() }">
+						<div class='infoBar'>
+							<span class='name'>document name</span>
+							<div class='clear'></div>
+							<span class='created'>Created Monday 1st september 2014</span>
+							<span class='code'>A C AA EZ 0001</span>
+						</div>
+						<div class='infoPanel'>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec in tincidunt nibh. Sed dignissim dictum purus sed rutrum. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Aliquam tincidunt pharetra commodo. Fusce posuere lobortis pharetra.</div>
+						<div class='buttonBar'>
+							<span class='button'>Info</span>
+							<span class='button'>Edit</span>
+							<span class='button'>Share</span>
+							<span class='button'>Download</span>
+						</div>
+					</div>
+				</div>
+			</div>
 		</div>
-  	</div>
-  </div>
+	</div>
+</div>
 
 <script>
 
@@ -32,7 +44,7 @@
 		self.photos = ko.observableArray();
 	}
 
-	function PhotoViewModel(name, width, height) {
+	function AssetViewModel(name, width, height) {
 
 		this.name = name;
 		this.height = height;
@@ -52,7 +64,7 @@
 		this.url = function() { return 'url(css/img/' + name + '.png)'}
 	}
 
-	function galleryViewModel() {
+	function GalleryViewModel() {
 
 	    var self = this;
 		self.pages = ko.observableArray();
@@ -130,35 +142,36 @@
 	$(document).ready(function() {
 
 		var testPage = new PageViewModel();
-			testPage.photos.push(new PhotoViewModel(1,323,180));
-			testPage.photos.push(new PhotoViewModel(2,312,153));
-			testPage.photos.push(new PhotoViewModel(3,1282,1660));
-			testPage.photos.push(new PhotoViewModel(4,297,226));
-			testPage.photos.push(new PhotoViewModel(5,374,245));
-			testPage.photos.push(new PhotoViewModel(6,512,512));
-			testPage.photos.push(new PhotoViewModel(8,441,286));
-			testPage.photos.push(new PhotoViewModel(9,1600,1067));
-			testPage.photos.push(new PhotoViewModel(10,277,186));
-			testPage.photos.push(new PhotoViewModel(11,1298,1678));
-			testPage.photos.push(new PhotoViewModel(12,1298,1678));
+			testPage.photos.push(new AssetViewModel(1,323,180));
+			testPage.photos.push(new AssetViewModel(2,1698,1131));
+			testPage.photos.push(new AssetViewModel(3,1282,1660));
+			testPage.photos.push(new AssetViewModel(4,297,226));
+			testPage.photos.push(new AssetViewModel(5,374,245));
+			testPage.photos.push(new AssetViewModel(6,1024,616));
+			testPage.photos.push(new AssetViewModel(8,441,286));
+			testPage.photos.push(new AssetViewModel(9,1600,1067));
+			testPage.photos.push(new AssetViewModel(10,277,186));
+			testPage.photos.push(new AssetViewModel(11,1298,1678));
+			testPage.photos.push(new AssetViewModel(13,1280,851));
 
-		vm = new galleryViewModel();
+		vm = new GalleryViewModel();
 		vm.addPage(testPage);
 		ko.applyBindings(vm);
 
 		$('#addAssetButton').on('click', function(){
 
 			var testPage = new PageViewModel();
-			testPage.photos.push(new PhotoViewModel(3,1282,1660));
-			testPage.photos.push(new PhotoViewModel(4,297,226));
-			testPage.photos.push(new PhotoViewModel(1,1298,1678));
-			testPage.photos.push(new PhotoViewModel(1,181,323));
-			testPage.photos.push(new PhotoViewModel(1,277,186));
-			testPage.photos.push(new PhotoViewModel(5,374,245));
-			testPage.photos.push(new PhotoViewModel(6,512,512));
-			testPage.photos.push(new PhotoViewModel(8,441,286));
-			testPage.photos.push(new PhotoViewModel(9,1600,1067));
-			testPage.photos.push(new PhotoViewModel(12,1298,1678));
+			testPage.photos.push(new AssetViewModel(3,1282,1660));
+			testPage.photos.push(new AssetViewModel(4,297,226));
+			testPage.photos.push(new AssetViewModel(1,1298,1678));
+			testPage.photos.push(new AssetViewModel(2,1698,1131));
+			testPage.photos.push(new AssetViewModel(1,181,323));
+			testPage.photos.push(new AssetViewModel(1,277,186));
+			testPage.photos.push(new AssetViewModel(5,374,245));
+			testPage.photos.push(new AssetViewModel(6,512,512));
+			testPage.photos.push(new AssetViewModel(8,441,286));
+			testPage.photos.push(new AssetViewModel(9,1600,1067));
+			testPage.photos.push(new AssetViewModel(12,1298,1678));
 			vm.addPage(testPage);
 			vm.calculateFit();
 		});
