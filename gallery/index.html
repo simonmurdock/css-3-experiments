@@ -13,13 +13,12 @@
   		<input type='button' value='Add a page' id='addAssetButton'></input>
   	</div>
   	<div id='rightColumn'>
-		<div id='container' data-bind="foreach: pages()">
-			<div id='pageContainer' data-bind="foreach: photos()">
-	   			<div class="galleryPic" data-bind="style:{ width:displayWidthCss(), height:displayHeightCss(), backgroundImage:url() }">
-	   				<div class='galleryPicPopup'>
-	   					<div data-bind="style:{  backgroundImage:url() }" class='galleryPicPopupContent'></div>
+		<div id='container' data-bind='foreach: pages()'>
+			<div id='pageContainer' data-bind='foreach: photos()'>
+	   			<div class='asset' data-bind='style:{ width:displayWidthCss(), height:displayHeightCss(), backgroundImage:url() }'>
+	   				<div data-bind="style:{  backgroundImage:url()}" class='assetPopup'>
+	   					<div class='infoBar' data-bind='text:width+"x"+height'></div>	
 	   				</div>
-	   				<div class='infoBar' data-bind='text:width+"x"+height'></div>
 	   			</div>
 	   		</div>
 		</div>
@@ -89,7 +88,6 @@
 				self.overallIndex = 0;
 				self.weights = [];
 				self.rowBuffer = [];
-				self.overallIndex = 0;
 
 				self.photos = self.pages()[p].photos;
 
@@ -151,16 +149,16 @@
 		$('#addAssetButton').on('click', function(){
 
 			var testPage = new PageViewModel();
-			testPage.photos.push(new PhotoViewModel(32,1282,1660));
-			testPage.photos.push(new PhotoViewModel(43,297,226));
-			testPage.photos.push(new PhotoViewModel(119,1298,1678));
-			testPage.photos.push(new PhotoViewModel(15,181,323));
-			testPage.photos.push(new PhotoViewModel(180,277,186));
-			testPage.photos.push(new PhotoViewModel(54,374,245));
-			testPage.photos.push(new PhotoViewModel(65,512,512));
-			testPage.photos.push(new PhotoViewModel(86,441,286));
-			testPage.photos.push(new PhotoViewModel(97,1600,1067));
-			testPage.photos.push(new PhotoViewModel(120,1298,1678));
+			testPage.photos.push(new PhotoViewModel(3,1282,1660));
+			testPage.photos.push(new PhotoViewModel(4,297,226));
+			testPage.photos.push(new PhotoViewModel(1,1298,1678));
+			testPage.photos.push(new PhotoViewModel(1,181,323));
+			testPage.photos.push(new PhotoViewModel(1,277,186));
+			testPage.photos.push(new PhotoViewModel(5,374,245));
+			testPage.photos.push(new PhotoViewModel(6,512,512));
+			testPage.photos.push(new PhotoViewModel(8,441,286));
+			testPage.photos.push(new PhotoViewModel(9,1600,1067));
+			testPage.photos.push(new PhotoViewModel(12,1298,1678));
 			vm.addPage(testPage);
 			vm.calculateFit();
 		});
