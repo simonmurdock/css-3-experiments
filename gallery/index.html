@@ -109,7 +109,7 @@
 				};
 
 				self.viewportWidth = document.getElementById("container").clientWidth;
-				self.rows = Math.round((self.summedWidth/ self.viewportWidth/4));
+				self.rows = Math.round((self.summedWidth/self.viewportWidth)/2);
 				self.partition = linearPartition(self.weights, self.rows);
 
 				for (var r = 0; r < self.partition.length; r++) {
