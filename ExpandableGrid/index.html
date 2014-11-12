@@ -1,0 +1,128 @@
+
+<html>
+	<head>
+		<link rel="stylesheet" href="css.css">
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.2.0/knockout-min.js"></script>
+		<title>Expandable Grid</title>
+	</head>
+<body>
+<div id='spaContainer'>
+	<div id='toolbar' class='lightShadow'>
+		<div class='twentyLeft'>
+			<span data-bind='click:toggleMenu' id='menuButton'>Menu</span>
+		</div>
+		<input data-bind="value: filter,valueUpdate: 'afterkeydown'" id='filter' type='text'>
+		<div class='twentyLeft'>
+			<span data-bind='text:rowsFilteredCountText'></span>
+		</div>
+	</div>
+
+	<div id='leftMenu' data-bind='css{revealFromLeft:menuShown}' class='lightShadow'>
+		<ul data-bind='foreach:MenuItems'>
+			<li data-bind='text:text'></li>
+		</ul>
+	</div>
+
+	<div data-bind='foreach:rowsFiltered, visible:rowsFiltered().length >0' class='centeredContainer lightShadow'>
+		<div class='row'>
+			<div class='icon'></div>
+			<span data-bind='text:category,css:category' class='title'></span>
+			<span data-bind='text:title'></span>
+			<span data-bind='click:del' class='rowControls'>delete</span>
+		</div>
+	</div>
+
+	<div data-bind='visible:noResults' class='centeredContainer'>
+		<div class='message lightShadow'>No results, sorry!</div>
+	</div>
+
+</div>
+
+<script>
+
+	var spa = null;
+
+	function RowViewModel(title, category) {
+		
+		var self = this;
+
+		self.category = category;
+		self.title = title;
+
+		self.del = function(r){
+			spa.rows.remove(r);
+	    };
+	};
+
+	function MenuRowViewModel(text,url) {
+		
+		var self = this;
+
+		self.text = text;
+		self.url = url;
+	};
+
+
+	function SpaViewModel() {
+
+		var self = this;
+
+		self.filter = ko.observable('');
+		self.rows = ko.observableArray();
+		self.MenuItems = ko.observableArray();
+
+		self.init = function(){
+			self.buildMenu();
+		};
+
+		self.buildMenu = function() {
+			var menuArray = self.MenuItems();
+			menuArray.push(new MenuRowViewModel('Inbox','#'));
+			menuArray.push(new MenuRowViewModel('Drafts','#'));
+			menuArray.push(new MenuRowViewModel('Sent','#'));
+			menuArray.push(new MenuRowViewModel('Reminders','#'));
+			menuArray.push(new MenuRowViewModel('Snoozed','#'));
+			self.MenuItems.valueHasMutated();
+		}
+
+		self.menuShown = ko.observable(false);
+
+		self.toggleMenu = function () { self.menuShown(!self.menuShown()) };
+
+		self.rowsFiltered = ko.computed(function(){
+			if(self.filter() == '')
+				return self.rows();
+			else {
+				return ko.utils.arrayFilter(self.rows(), function(row) {
+					return row.title.indexOf(self.filter()) >= 0;
+				});
+			} 	
+		});
+
+		self.rowsFilteredCountText = ko.computed(function(){
+			return self.rowsFiltered().length + ' of ' + self.rows().length + ' rows on screen';
+		});
+
+		self.noResults = ko.computed(function(){
+			return self.rowsFiltered().length == 0;
+		})
+
+		self.init();
+	};
+
+	$(document).ready(function() {
+
+		spa = new SpaViewModel();
+
+		spa.rows.push(new RowViewModel('this is a travel row','travel'));
+		spa.rows.push(new RowViewModel('this is an update row','updates'));
+		spa.rows.push(new RowViewModel('this is a forums row','forums'));
+		spa.rows.push(new RowViewModel('this is a pron row','pron'));
+
+		ko.applyBindings(spa);
+	});
+
+</script>
+</body>
+</html>
