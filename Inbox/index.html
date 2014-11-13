@@ -15,10 +15,11 @@
 		<input data-bind="value: filter,valueUpdate: 'afterkeydown'" id='filter' type='text'>
 		<div class='twentyLeft'>
 			<span data-bind='text:rowsFilteredCountText'></span>
+			<span data-bind='click:togglePinned,text:showPinned'>aaaa</span>
 		</div>
 	</div>
 
-	<div id='leftMenu' data-bind='css{revealFromLeft:menuShown}' class='lightShadow'>
+	<div id='leftMenu' data-bind='css{revealFromLeft:showMenu}' class='lightShadow'>
 		<ul data-bind='foreach:MenuItems'>
 			<li data-bind='text:text'></li>
 		</ul>
@@ -29,6 +30,7 @@
 			<div class='icon'></div>
 			<span data-bind='text:category,css:category' class='title'></span>
 			<span data-bind='text:title'></span>
+			<span data-bind='text:pinned'></span>
 			<span data-bind='click:del' class='rowControls'>delete</span>
 		</div>
 	</div>
@@ -43,10 +45,11 @@
 
 	var spa = null;
 
-	function RowViewModel(title, category) {
+	function RowViewModel(title, category,pinned) {
 		
 		var self = this;
 
+		self.pinned = ko.observable(pinned);
 		self.category = category;
 		self.title = title;
 
@@ -71,6 +74,8 @@
 		self.filter = ko.observable('');
 		self.rows = ko.observableArray();
 		self.MenuItems = ko.observableArray();
+		self.showMenu = ko.observable(false);
+		self.showPinned = ko.observable(false);	
 
 		self.init = function(){
 			self.buildMenu();
@@ -86,18 +91,25 @@
 			self.MenuItems.valueHasMutated();
 		}
 
-		self.menuShown = ko.observable(false);
-
-		self.toggleMenu = function () { self.menuShown(!self.menuShown()) };
+		self.toggleMenu = function () { self.showMenu(!self.showMenu()) };
+		self.togglePinned = function () { self.showPinned(!self.showPinned()) };
 
 		self.rowsFiltered = ko.computed(function(){
-			if(self.filter() == '')
+			if (self.filter() == '')
 				return self.rows();
 			else {
-				return ko.utils.arrayFilter(self.rows(), function(row) {
-					return row.title.indexOf(self.filter()) >= 0;
-				});
+				if (self.showPinned() == true){
+					return ko.utils.arrayFilter(self.rows(), function(row) {
+						return row.pinned() == true;
+					});
+				}
+				else {
+					return ko.utils.arrayFilter(self.rows(), function(row) {
+						return row.title.indexOf(self.filter()) >= 0;
+					});
+				}
 			} 	
+
 		});
 
 		self.rowsFilteredCountText = ko.computed(function(){
@@ -115,10 +127,10 @@
 
 		spa = new SpaViewModel();
 
-		spa.rows.push(new RowViewModel('this is a travel row','travel'));
-		spa.rows.push(new RowViewModel('this is an update row','updates'));
-		spa.rows.push(new RowViewModel('this is a forums row','forums'));
-		spa.rows.push(new RowViewModel('this is a pron row','pron'));
+		spa.rows.push(new RowViewModel('this is a travel row',	'travel', 	true));
+		spa.rows.push(new RowViewModel('this is an update row',	'updates', 	false));
+		spa.rows.push(new RowViewModel('this is a forums row',	'forums',	true));
+		spa.rows.push(new RowViewModel('this is a pron row',	'pron',		false));
 
 		ko.applyBindings(spa);
 	});
