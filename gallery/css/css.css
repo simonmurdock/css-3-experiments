@@ -29,7 +29,9 @@ input {
 	clear:both;
 }
 
-#pageLayout {}
+#pageLayout {
+	margin:2px;
+}
 
 	#leftColumn {
 		width:300px;
@@ -37,9 +39,7 @@ input {
 	}
 
 	#rightColumn {
-		padding-left:300px;
 		overflow:visible;
-		margin-right:100px;
 	}
 
 		#container {
@@ -49,131 +49,27 @@ input {
 		}
 
 			#pageContainer {
-				opacity:0;
+				opacity:1;
 				clear:both;
 				position:relative;
-
-				-webkit-animation: fadeIn100 0.4s;
-			  	-webkit-animation-iteration-count: 1;
-			  	-webkit-animation-fill-mode: forwards;
-			  	   -moz-animation: fadeIn100 0.4s;
-			  	   -moz-animation-iteration-count: 1;
-			  	   -moz-animation-fill-mode: forwards;
-			  	        animation: fadeIn100 0.4s;
-			  	        animation-iteration-count: 1;
-			  	        animation-fill-mode: forwards;
-			  	-webkit-transform-style: preserve-3d;
-			  	   -moz-transform-style: preserve-3d;
-				        transform-style: preserve-3d;
 			}
 
 				.asset {
 					overflow:visible;
 					border:2px solid white;
-					background:grey;
-					background-size: cover;
+					background:#a4c400;
 					float: left;
 					position:relative;
-
+					overflow:hidden;
 					-webkit-box-sizing: border-box;
 					   -moz-box-sizing: border-box;
 					        box-sizing: border-box;
 				}
-
-				.asset:hover .assetPopup {
-					opacity:1;
-					z-index:10;
-					left:-125px;
-					top:-100px;
-					width:500px;
-					height:400px;
-					box-shadow:0 6px 8px rgba(0,0,0,0.9);
-
-					-webkit-transition: all 0.2s;
-				       -moz-transition: all 0.2s;
-							transition: all 0.2s;
-				}
-
-				.asset .assetPopup {
-					position:absolute;
-					height:0;
-					width:0;
-					overflow:hidden;
-					background-size:cover;
-					background-repeat:none;
-					z-index:-1;
+				.asset .assetStats {
+					padding:10px;
 					color:white;
-						
-						-webkit-box-sizing: border-box;
-					       -moz-box-sizing: border-box;
-					       		box-sizing: border-box;					
+					font-family:arial;
 				}
-
-					.assetPopup .infoBar {
-						background-color:rgba(0,0,0,0.7);
-						padding:10px;
-						font-family:helvetica;
-						font-size:9pt;
-						color:white;
-						height:30px;
-					}
-
-						.infoBar .name {
-							float:left;
-							height:20px;
-							line-height:20px;
-						}
-
-						.infoBar .created {
-							float:left;
-							height:20px;
-							font-size:8px;
-							line-height:10px;
-						}
-
-						.infoBar .code {
-							float:right;
-							clear:none;
-							height:20px;
-							font-size:12pt;
-							line-height:20px;
-							margin-top:-15px;
-						}
-
-					.assetPopup .infoPanel {
-						background-color:rgba(0,0,0,0.7);
-						font-family:helvetica;
-						font-size:9pt;
-						opacity:0;
-						padding:10px;
-						height:310px;
-						line-height:16px;
-						transition: opacity 0.5s;
-
-						-webkit-box-sizing: border-box;
-					       -moz-box-sizing: border-box;
-					       		box-sizing: border-box;	
-					}
-
-						.infoPanel:hover {
-							/*opacity:1;
-							border-top:1px dotted #444;
-							border-bottom:1px dotted #444;*/
-						}
-					
-					.assetPopup .buttonBar {
-						background-color:rgba(0,0,0,0.7);
-						height:40px;
-						padding:10px;
-						font-family:helvetica;
-						font-size:9pt;
-						color:white;
-						line-height:20px;
-						transition-delay:2s;
-						-webkit-box-sizing: border-box;
-					       -moz-box-sizing: border-box;
-					       		box-sizing: border-box;	
-					}
 
 					.buttonBar .button {
 						margin-left:10px;

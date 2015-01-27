@@ -9,34 +9,15 @@
 	</head>
 <body>
 <div id='pageLayout'>
-	<div id='leftColumn'>
-		<input type='button' value='Add a page' id='addAssetButton'></input>
-	</div>
 	<div id='rightColumn'>
 		<div id='container' data-bind='foreach: pages()'>
 			<div id='pageContainer' data-bind='foreach: photos()'>
-				<div class='asset' data-bind='style:{ width:displayWidthCss(), height:displayHeightCss(), backgroundImage:url() }'>
-					<div class='assetPopup' data-bind="style:{ backgroundImage:url() }">
-						<div class='infoBar'>
-							<span class='name'>document name</span>
-							<div class='clear'></div>
-							<span class='created'>Created Monday 1st september 2014</span>
-							<span class='code'>A C AA EZ 0001</span>
-						</div>
-						<div class='infoPanel'>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec in tincidunt nibh. Sed dignissim dictum purus sed rutrum. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Aliquam tincidunt pharetra commodo. Fusce posuere lobortis pharetra.</div>
-						<div class='buttonBar'>
-							<span class='button'>Info</span>
-							<span class='button'>Edit</span>
-							<span class='button'>Share</span>
-							<span class='button'>Download</span>
-						</div>
-					</div>
-				</div>
+				<div class='asset' data-bind='style:{ width:displayWidthCss(), height:displayHeightCss()}'></div>
 			</div>
 		</div>
 	</div>
 </div>
-
+<input type='button' value='Add a page' id='addAssetButton'></input>
 <script>
 
 	function PageViewModel() {
@@ -88,8 +69,8 @@
 
 		    var ratio = maxHeight / photo.height;
 
-		    photo.displayWidth(Math.floor(photo.width*ratio));
-		    photo.displayHeight(Math.floor(maxHeight));
+		    photo.displayWidth(photo.width*ratio);
+		    photo.displayHeight(maxHeight);
 		}
 
 		self.calculateFit = function(){
@@ -109,7 +90,8 @@
 				};
 
 				self.viewportWidth = document.getElementById("container").clientWidth;
-				self.rows = Math.round((self.summedWidth/self.viewportWidth)/2);
+				self.rows = 50;
+				console.log(self.summedWidth)
 				self.partition = linearPartition(self.weights, self.rows);
 
 				for (var r = 0; r < self.partition.length; r++) {
@@ -139,40 +121,32 @@
 
 	var vm;
 
-	$(document).ready(function() {
+
+	var generateData = function(){
+
+		function getRandomInt(min, max) {
+    		return Math.floor(Math.random() * (max - min + 1)) + min;
+		}
 
 		var testPage = new PageViewModel();
-			testPage.photos.push(new AssetViewModel(1,323,180));
-			testPage.photos.push(new AssetViewModel(2,1698,1131));
-			testPage.photos.push(new AssetViewModel(3,1282,1660));
-			testPage.photos.push(new AssetViewModel(4,297,226));
-			testPage.photos.push(new AssetViewModel(5,374,245));
-			testPage.photos.push(new AssetViewModel(6,1024,616));
-			testPage.photos.push(new AssetViewModel(8,441,286));
-			testPage.photos.push(new AssetViewModel(9,1600,1067));
-			testPage.photos.push(new AssetViewModel(10,277,186));
-			testPage.photos.push(new AssetViewModel(11,1298,1678));
-			testPage.photos.push(new AssetViewModel(13,1280,851));
+		for (var i = 0; i < 300; i++) {
+			var x = getRandomInt(100,200);
+			var y = getRandomInt(100,200);
+			testPage.photos.push(new AssetViewModel(i,x,y));
+		}
+
+		return testPage;
+	}
+
+	$(document).ready(function() {
 
 		vm = new GalleryViewModel();
-		vm.addPage(testPage);
+		vm.addPage(generateData());
 		ko.applyBindings(vm);
 
 		$('#addAssetButton').on('click', function(){
 
-			var testPage = new PageViewModel();
-			testPage.photos.push(new AssetViewModel(3,1282,1660));
-			testPage.photos.push(new AssetViewModel(4,297,226));
-			testPage.photos.push(new AssetViewModel(1,1298,1678));
-			testPage.photos.push(new AssetViewModel(2,1698,1131));
-			testPage.photos.push(new AssetViewModel(1,181,323));
-			testPage.photos.push(new AssetViewModel(1,277,186));
-			testPage.photos.push(new AssetViewModel(5,374,245));
-			testPage.photos.push(new AssetViewModel(6,512,512));
-			testPage.photos.push(new AssetViewModel(8,441,286));
-			testPage.photos.push(new AssetViewModel(9,1600,1067));
-			testPage.photos.push(new AssetViewModel(12,1298,1678));
-			vm.addPage(testPage);
+			vm.addPage(generateData());
 			vm.calculateFit();
 		});
 
