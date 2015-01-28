@@ -7,22 +7,22 @@ var uglify = require('gulp-uglify');
 var rename = require('gulp-rename');
 var minifyCSS = require('gulp-minify-css');
 
+// // Concatenate & Minify JS
+// gulp.task('scripts', function() {
+//     return gulp.src('js/linear_partition.js')
+//         .pipe(gulp.dest('wwwroot/js'))
+//         .pipe(rename('linear_partition.min.js'))
+//         .pipe(uglify({mangle:true, compress:true}))
+//         .pipe(gulp.dest('wwwroot/js'));
+// });
 // Concatenate & Minify JS
 gulp.task('scripts', function() {
-    return gulp.src('js/viewmodels/*.js')
-        .pipe(concat('viewmodels.js'))
+    return gulp.src('js/gallery.js')
         .pipe(gulp.dest('wwwroot/js'))
-        .pipe(rename('viewmodels.min.js'))
-        .pipe(uglify({mangle:true, compress:false}))
+        .pipe(rename('gallery.min.js'))
+        .pipe(uglify())
         .pipe(gulp.dest('wwwroot/js'));
 });
 
-gulp.task('minify-css', function() {
-  gulp.src('css/*.css')
-    .pipe(minifyCSS({keepBreaks:false}))
-    .pipe(gulp.dest('wwwroot/css'))
-});
-
-
 // Default Task
-gulp.task('default', ['scripts','minify-css']);
+gulp.task('default', ['scripts']);

@@ -3,151 +3,40 @@
 	<head>
 		<link rel="stylesheet" href="css/css.css">
 		<script type="text/javascript" src="js/jquery.js"></script>
-		<script type="text/javascript" src="js/linear_partition.js"></script>
 		<script type="text/javascript" src="js/knockout-3.2.0.js"></script>
-		<title>dynamic gallery</title>
+		<script type="text/javascript" src="js/gallery.js"></script>
+		<title>linear partition gallery</title>
 	</head>
 <body>
+
 <div id='pageLayout'>
-	<div id='rightColumn'>
-		<div id='container' data-bind='foreach: pages()'>
-			<div id='pageContainer' data-bind='foreach: photos()'>
-				<div class='asset' data-bind='style:{ width:displayWidthCss(), height:displayHeightCss()}'></div>
-			</div>
+	<div id='container' data-bind='foreach: pages()'>
+		<div id='pageContainer' data-bind='foreach: photos()'>
+			<div class='asset' data-bind='style:{ width:displayWidthCss(), height:displayHeightCss(), backgroundImage:cssUrl()}'></div>
 		</div>
 	</div>
 </div>
-<input type='button' value='Add a page' id='addAssetButton'></input>
+
 <script>
 
-	function PageViewModel() {
-		var self = this;
-		self.photos = ko.observableArray();
-	}
-
-	function AssetViewModel(name, width, height) {
-
-		this.name = name;
-		this.height = height;
-		this.width = width;
-		this.aspectRatio = width/height;
-		this.displayWidth = ko.observable(100);
-		this.displayHeight = ko.observable(100);
-
-		this.displayWidthCss = ko.pureComputed(function() {
-			return this.displayWidth() + 'px';
-		}, this);
-
-		this.displayHeightCss = ko.pureComputed(function() {
-			return this.displayHeight() + 'px';
-		}, this);
-
-		this.url = function() { return 'url(css/img/' + name + '.png)'}
-	}
-
-	function GalleryViewModel() {
-
-	    var self = this;
-		self.pages = ko.observableArray();
-
-	    self.init = function() {
-
-			self.calculateFit();
-
-			window.onresize = function(event) {
-				vm.calculateFit();
-			}
-	    }
-
-	    self.addPage = function(page){
-
-	    	self.pages.push(page);
-	    	self.calculateFit();
-	    }
-
-		self.resize = function(photo, maxWidth, maxHeight) {
-
-		    var ratio = maxHeight / photo.height;
-
-		    photo.displayWidth(photo.width*ratio);
-		    photo.displayHeight(maxHeight);
-		}
-
-		self.calculateFit = function(){
-
-			for (var p = 0; p < self.pages().length; p++) {
-				
-				self.summedWidth = 0;
-				self.overallIndex = 0;
-				self.weights = [];
-				self.rowBuffer = [];
-
-				self.photos = self.pages()[p].photos;
-
-				for (var i = 0; i < self.photos().length; i++) {
-					self.summedWidth += (self.photos()[i].width);
-					self.weights.push(self.photos()[i].aspectRatio)
-				};
-
-				self.viewportWidth = document.getElementById("container").clientWidth;
-				self.rows = 50;
-				console.log(self.summedWidth)
-				self.partition = linearPartition(self.weights, self.rows);
-
-				for (var r = 0; r < self.partition.length; r++) {
-					
-					self.row = self.partition[r];
-					self.rowSummedAspectRatios = 0;
-					self.rowSummedWidth = 0;
-					self.rowBuffer = [];
-
-					for (var i = 0; i < self.row.length; i++) {
-						self.rowBuffer.push(self.photos()[self.overallIndex++]);
-					};
-
-					for (var z = 0; z < self.rowBuffer.length; z++) {
-						self.rowSummedAspectRatios += self.rowBuffer[z].aspectRatio;
-					};
-
-					for (var i = 0; i < self.rowBuffer.length; i++) {
-						self.resize(self.rowBuffer[i],self.viewportWidth / self.rowSummedAspectRatios * self.rowBuffer[i].aspectRatio, self.viewportWidth / self.rowSummedAspectRatios);
-					}
-				};
-			}
-		}
-
-		self.init();
-	}
-
-	var vm;
-
-
-	var generateData = function(){
-
-		function getRandomInt(min, max) {
-    		return Math.floor(Math.random() * (max - min + 1)) + min;
-		}
-
-		var testPage = new PageViewModel();
-		for (var i = 0; i < 300; i++) {
-			var x = getRandomInt(100,200);
-			var y = getRandomInt(100,200);
-			testPage.photos.push(new AssetViewModel(i,x,y));
-		}
-
-		return testPage;
-	}
-
+	var vm = new GalleryViewModel();
+	
 	$(document).ready(function() {
 
-		vm = new GalleryViewModel();
-		vm.addPage(generateData());
-		ko.applyBindings(vm);
+		var userId = '13048208@N02'
+		var key = 'e0e471866f867e07aab38523cc832a80';
 
-		$('#addAssetButton').on('click', function(){
+		var url = 'https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=e0e471866f867e07aab38523cc832a80&text=barn%20Owl&sort=interestingness-desc&format=json&extras=url_m&per_page=200';
+		var url =
+		$.ajax(url, { dataType: 'jsonp', jsonp: 'jsoncallback' }).then(function(data, status, xhr) {
+			
+			var flickrPage = new PageViewModel();
+			$.each(data.photos.photo, function(key,p){
+				flickrPage.photos.push(new AssetViewModel(p.id,parseInt(p.width_m),parseInt(p.height_m),p.url_m));
+			})
 
-			vm.addPage(generateData());
-			vm.calculateFit();
+			vm.addPage(flickrPage);
+			ko.applyBindings(vm);
 		});
 
 	});
