@@ -177,7 +177,6 @@ function PageViewModel() {
 
 				self.viewportWidth = document.getElementById("container").clientWidth;
 				self.rows = 40;
-				console.log(self.summedWidth)
 				self.partition = linearPartition(self.weights, self.rows);
 
 				for (var r = 0; r < self.partition.length; r++) {
