@@ -7,6 +7,10 @@ var uglify = require('gulp-uglify');
 var rename = require('gulp-rename');
 var minifyCSS = require('gulp-minify-css');
 
+gulp.task('copy', function(){
+  return gulp.src('index.html')
+    .pipe(gulp.dest('wwwroot'));
+});
 
 gulp.task('css', function() {
     return gulp.src('css/css.css')
@@ -21,4 +25,4 @@ gulp.task('scripts', function() {
 });
 
 // Default Task
-gulp.task('default', ['scripts', 'css']);
+gulp.task('default', ['scripts', 'css', 'copy']);
