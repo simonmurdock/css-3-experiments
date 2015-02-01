@@ -17,6 +17,6 @@ CSS3 - 3D Cube with shadowing
 ------
 Testing out simulated semi-realistic soft shadowing below a cube
 
-Depth of Field
+CSS3 - Depth of Field
 ------
 Basic demo of simulated DOF using divs with different "depths", using webkit blur filters to simulate the depth.
