@@ -27,7 +27,7 @@ input {
 			background:#a4c400;
 			float: left;
 			position:relative;
-			background-size:contain;
+			background-size:cover;
 			-webkit-box-sizing: border-box;
 			   -moz-box-sizing: border-box;
 			        box-sizing: border-box;
