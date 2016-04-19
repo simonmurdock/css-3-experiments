@@ -16,6 +16,10 @@ input {
 	margin:2px;
 }
 
+#pageLayout #container {
+	width:80%;
+	margin:auto;
+}
 	#pageContainer {
 		clear:both;
 		position:relative;

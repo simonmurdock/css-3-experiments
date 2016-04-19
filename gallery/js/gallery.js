@@ -1,3 +1,104 @@
+function PageViewModel() {
+	var self = this;
+	self.photos = ko.observableArray();
+}
+
+function AssetViewModel(name, width, height, url) {
+
+	this.name = name;
+	this.height = height;
+	this.width = width;
+	this.aspectRatio = width/height;
+	this.displayWidth = ko.observable(0);
+	this.displayHeight = ko.observable(0);
+
+	this.displayWidthCss = ko.pureComputed(function() {
+		return Math.floor(this.displayWidth()) + 'px';
+	}, this);
+
+	this.displayHeightCss = ko.pureComputed(function() {
+		return Math.floor(this.displayHeight()) + 'px';
+	}, this);
+
+	this.cssUrl = function() { return 'url(' + url + ')'}
+}
+
+function GalleryViewModel(rows) {
+
+    var self = this;
+	self.pages = ko.observableArray();
+
+    self.init = function() {
+
+		self.calculateFit();
+
+		window.onresize = function(event) {
+			vm.calculateFit();
+		}
+    }
+
+    self.addPage = function(page){
+
+    	self.pages.push(page);
+    	self.calculateFit();
+    }
+
+	self.resize = function(photo, maxWidth, maxHeight) {
+
+	    var ratio = maxHeight / photo.height;
+
+	    photo.displayWidth(photo.width*ratio);
+	    photo.displayHeight(maxHeight);
+	}
+
+	self.calculateFit = function(){
+
+        self.roundingFudgeFactor = 2;
+        self.viewportWidth = document.getElementById("container").clientWidth-self.roundingFudgeFactor;
+        self.idealHeight = window.outerHeight / 3;
+
+		for (var p = 0; p < self.pages().length; p++) {
+
+            self.summedWidth = 0;
+			self.overallIndex = 0;
+			self.weights = [];
+			self.rowBuffer = [];
+			self.photos = self.pages()[p].photos;
+            
+			for (var i = 0; i < self.photos().length; i++) {
+				self.summedWidth += (self.photos()[i].aspectRatio * self.idealHeight);
+				self.weights.push(self.photos()[i].aspectRatio)
+			};
+
+            //self.rows = 50;
+            self.rows = Math.round(self.summedWidth / self.viewportWidth);
+			self.partition = linearPartition(self.weights, self.rows);
+
+			for (var r = 0; r < self.partition.length; r++) {
+				
+				self.row = self.partition[r];
+				self.rowSummedAspectRatios = 0;
+				self.rowSummedWidth = 0;
+				self.rowBuffer = [];
+
+				for (var i = 0; i < self.row.length; i++) {
+					self.rowBuffer.push(self.photos()[self.overallIndex++]);
+				};
+
+				for (var z = 0; z < self.rowBuffer.length; z++) {
+					self.rowSummedAspectRatios += self.rowBuffer[z].aspectRatio;
+				};
+
+				for (var i = 0; i < self.rowBuffer.length; i++) {
+					self.resize(self.rowBuffer[i],self.viewportWidth / self.rowSummedAspectRatios * self.rowBuffer[i].aspectRatio, self.viewportWidth / self.rowSummedAspectRatios);
+				}
+			};
+		}
+	}
+
+	self.init();
+}
+
 var linearPartition = function (seq, k) {
     var i, n, partitionTable, table, solution, ans = [],
         finalResult = [];
@@ -45,7 +146,6 @@ var linearPartition = function (seq, k) {
 
     return finalResult.concat(ans);
 };
-
 
 var linearPartitionTable = function (seq, k) {
     var i, j, n = seq.length,
@@ -106,100 +206,3 @@ var linearPartitionTable = function (seq, k) {
     return [table, solution];
 };
 
-function PageViewModel() {
-		var self = this;
-		self.photos = ko.observableArray();
-	}
-
-	function AssetViewModel(name, width, height, url) {
-
-		this.name = name;
-		this.height = height;
-		this.width = width;
-		this.aspectRatio = width/height;
-		this.displayWidth = ko.observable(0);
-		this.displayHeight = ko.observable(0);
-
-		this.displayWidthCss = ko.pureComputed(function() {
-			return Math.floor(this.displayWidth()) + 'px';
-		}, this);
-
-		this.displayHeightCss = ko.pureComputed(function() {
-			return Math.floor(this.displayHeight()) + 'px';
-		}, this);
-
-		this.cssUrl = function() { return 'url(' + url + ')'}
-	}
-
-	function GalleryViewModel(rows) {
-
-	    var self = this;
-		self.pages = ko.observableArray();
-
-	    self.init = function() {
-
-			self.calculateFit();
-
-			window.onresize = function(event) {
-				vm.calculateFit();
-			}
-	    }
-
-	    self.addPage = function(page){
-
-	    	self.pages.push(page);
-	    	self.calculateFit();
-	    }
-
-		self.resize = function(photo, maxWidth, maxHeight) {
-
-		    var ratio = maxHeight / photo.height;
-
-		    photo.displayWidth(photo.width*ratio);
-		    photo.displayHeight(maxHeight);
-		}
-
-		self.calculateFit = function(){
-
-			for (var p = 0; p < self.pages().length; p++) {
-				
-				self.summedWidth = 0;
-				self.overallIndex = 0;
-				self.weights = [];
-				self.rowBuffer = [];
-
-				self.photos = self.pages()[p].photos;
-
-				for (var i = 0; i < self.photos().length; i++) {
-					self.summedWidth += (self.photos()[i].width);
-					self.weights.push(self.photos()[i].aspectRatio)
-				};
-
-				self.viewportWidth = document.getElementById("container").clientWidth;
-				self.rows = 40;
-				self.partition = linearPartition(self.weights, self.rows);
-
-				for (var r = 0; r < self.partition.length; r++) {
-					
-					self.row = self.partition[r];
-					self.rowSummedAspectRatios = 0;
-					self.rowSummedWidth = 0;
-					self.rowBuffer = [];
-
-					for (var i = 0; i < self.row.length; i++) {
-						self.rowBuffer.push(self.photos()[self.overallIndex++]);
-					};
-
-					for (var z = 0; z < self.rowBuffer.length; z++) {
-						self.rowSummedAspectRatios += self.rowBuffer[z].aspectRatio;
-					};
-
-					for (var i = 0; i < self.rowBuffer.length; i++) {
-						self.resize(self.rowBuffer[i],self.viewportWidth / self.rowSummedAspectRatios * self.rowBuffer[i].aspectRatio, self.viewportWidth / self.rowSummedAspectRatios);
-					}
-				};
-			}
-		}
-
-		self.init();
-	}

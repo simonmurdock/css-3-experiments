@@ -23,15 +23,13 @@
 	
 	$(document).ready(function() {
 	
-		var key = 'e0e471866f867e07aab38523cc832a80';
-		var url = 'https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=e0e471866f867e07aab38523cc832a80&text=barn%20Owl&sort=interestingness-desc&format=json&extras=url_m&per_page=200';
+		var url = 'https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=9b3ee6ec80a8d5858471455bbda0039e&text=tokyo%20timelapse&sort=interestingness-desc&format=json&extras=url_m&per_page=100';
 
 		$.ajax(url, { dataType: 'jsonp', jsonp: 'jsoncallback' }).then(function(data, status, xhr) {
 			
 			var flickrPage = new PageViewModel();
 
 			$.each(data.photos.photo, function(key,p){
-				
 				flickrPage.photos.push(new AssetViewModel(p.id,parseInt(p.width_m),parseInt(p.height_m),p.url_m));
 			})
 
