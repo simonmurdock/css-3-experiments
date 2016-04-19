@@ -29,9 +29,12 @@
 			
 			var flickrPage = new PageViewModel();
 
+			var underlyingPhotosArray = flickrPage.photos();
 			$.each(data.photos.photo, function(key,p){
-				flickrPage.photos.push(new AssetViewModel(p.id,parseInt(p.width_m),parseInt(p.height_m),p.url_m));
+				underlyingPhotosArray.push(new AssetViewModel(p.id,parseInt(p.width_m),parseInt(p.height_m),p.url_m));
 			})
+			flickrPage.photos(underlyingPhotosArray);
+			flickrPage.photos.valueHasMutated();
 
 			vm.addPage(flickrPage);
 			ko.applyBindings(vm);

@@ -30,8 +30,6 @@ function GalleryViewModel(rows) {
 
     self.init = function() {
 
-		self.calculateFit();
-
 		window.onresize = function(event) {
 			vm.calculateFit();
 		}
@@ -52,6 +50,8 @@ function GalleryViewModel(rows) {
 	}
 
 	self.calculateFit = function(){
+
+        if(self.pages().length == 0) return;
 
         self.roundingFudgeFactor = 2;
         self.viewportWidth = document.getElementById("container").clientWidth-self.roundingFudgeFactor;
