@@ -20,6 +20,11 @@ input {
 	width:80%;
 	margin:auto;
 }
+.title {
+	margin:20px 0 20px 0;
+	display:block;
+	font-family:'open Sans';
+}
 	#pageContainer {
 		clear:both;
 		position:relative;

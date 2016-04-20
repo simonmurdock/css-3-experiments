@@ -4,6 +4,7 @@
 		<link rel="stylesheet" href="css/css.css">
 		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.2.0/knockout-min.js"></script>
+		<link href='https://fonts.googleapis.com/css?family=Roboto:400,100|Open+Sans' rel='stylesheet'>
 		<script type="text/javascript" src="js/gallery.js"></script>
 		<title>linear partition gallery</title>
 	</head>
@@ -11,6 +12,7 @@
 
 <div id='pageLayout'>
 	<div id='container' data-bind='foreach: pages()'>
+	<span class='title'>Linear Partition Gallery fed by a Flickr API</span>
 		<div id='pageContainer' data-bind='foreach: photos()'>
 			<div class='asset' data-bind='style:{ width:displayWidthCss(), height:displayHeightCss(), backgroundImage:cssUrl()}'></div>
 		</div>
