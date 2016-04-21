@@ -70,8 +70,8 @@ function GalleryViewModel(rows) {
 				self.weights.push(self.photos()[i].aspectRatio)
 			};
 
-            //self.rows = 50;
-            self.rows = Math.round(self.summedWidth / self.viewportWidth);
+            self.rows = 50;
+            //self.rows = Math.round(Math.floor(self.summedWidth) / Math.floor(self.viewportWidth));
 			self.partition = linearPartition(self.weights, self.rows);
 
 			for (var r = 0; r < self.partition.length; r++) {
